@@ -18,6 +18,8 @@ class ViewerGL:
         # création et paramétrage de la fenêtre
         glfw.window_hint(glfw.RESIZABLE, False)
         self.window = glfw.create_window(800, 800, 'OpenGL', None, None)
+        """ monitors = glfw.get_monitors()
+        screen_size = glfw.get_video_mode(monitors[0]) """
         # paramétrage de la fonction de gestion des évènements
         glfw.set_key_callback(self.window, self.key_callback)
         # activation du context OpenGL pour la fenêtre
@@ -31,6 +33,8 @@ class ViewerGL:
 
         self.objs = []
         self.touch = {}
+        glfw.set_cursor_pos(self.window, 400, 400)
+        self.x_cursor, self.y_cursor = glfw.get_cursor_pos(self.window)
 
     def run(self):
         # boucle d'affichage
@@ -39,6 +43,8 @@ class ViewerGL:
             GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
 
             self.update_key()
+            
+            # self.cursor_camera()
 
             for obj in self.objs:
                 GL.glUseProgram(obj.program)
@@ -46,11 +52,23 @@ class ViewerGL:
                     self.update_camera(obj.program)
                 obj.draw()
 
+
             # changement de buffer d'affichage pour éviter un effet de scintillement
             glfw.swap_buffers(self.window)
             # gestion des évènements
             glfw.poll_events()
-        
+    
+
+    def cursor_camera(self):
+        x, y = glfw.get_cursor_pos(self.window)
+        dx = (x - self.x_cursor)/500
+        dy = (y - self.y_cursor)/500
+        self.cam.transformation.rotation_euler[pyrr.euler.index().yaw] += dx
+        self.cam.transformation.rotation_euler[pyrr.euler.index().roll] += dy
+        # glfw.set_cursor_pos(self.window, 400, 400)
+        self.x_cursor, self.y_cursor = x, y
+
+
     def key_callback(self, win, key, scancode, action, mods):
         # sortie du programme si appui sur la touche 'échappement'
         if key == glfw.KEY_ESCAPE and action == glfw.PRESS:
@@ -101,7 +119,7 @@ class ViewerGL:
             self.cam.transformation.rotation_euler = self.objs[0].transformation.rotation_euler.copy() 
             self.cam.transformation.rotation_euler[pyrr.euler.index().yaw] += np.pi
             self.cam.transformation.rotation_center = self.objs[0].transformation.translation + self.objs[0].transformation.rotation_center
-            self.cam.transformation.translation = self.objs[0].transformation.translation + pyrr.Vector3([0, 0.5, -0.8])
+            self.cam.transformation.translation = self.objs[0].transformation.translation + pyrr.Vector3([0, 1.7, -0.4])
 
         if glfw.KEY_DOWN in self.touch and self.touch[glfw.KEY_DOWN] > 0:
             self.objs[0].transformation.translation -= \
@@ -109,21 +127,21 @@ class ViewerGL:
             self.cam.transformation.rotation_euler = self.objs[0].transformation.rotation_euler.copy() 
             self.cam.transformation.rotation_euler[pyrr.euler.index().yaw] += np.pi
             self.cam.transformation.rotation_center = self.objs[0].transformation.translation + self.objs[0].transformation.rotation_center
-            self.cam.transformation.translation = self.objs[0].transformation.translation + pyrr.Vector3([0, 0.5, -0.8])
+            self.cam.transformation.translation = self.objs[0].transformation.translation + pyrr.Vector3([0, 1.7, -0.4])
 
         if glfw.KEY_LEFT in self.touch and self.touch[glfw.KEY_LEFT] > 0:
             self.objs[0].transformation.rotation_euler[pyrr.euler.index().yaw] -= 0.1
             self.cam.transformation.rotation_euler = self.objs[0].transformation.rotation_euler.copy() 
             self.cam.transformation.rotation_euler[pyrr.euler.index().yaw] += np.pi
             self.cam.transformation.rotation_center = self.objs[0].transformation.translation + self.objs[0].transformation.rotation_center
-            self.cam.transformation.translation = self.objs[0].transformation.translation + pyrr.Vector3([0, 0.5, -0.8])
+            self.cam.transformation.translation = self.objs[0].transformation.translation + pyrr.Vector3([0, 1.7, -0.4])
 
         if glfw.KEY_RIGHT in self.touch and self.touch[glfw.KEY_RIGHT] > 0:
             self.objs[0].transformation.rotation_euler[pyrr.euler.index().yaw] += 0.1
             self.cam.transformation.rotation_euler = self.objs[0].transformation.rotation_euler.copy() 
             self.cam.transformation.rotation_euler[pyrr.euler.index().yaw] += np.pi
             self.cam.transformation.rotation_center = self.objs[0].transformation.translation + self.objs[0].transformation.rotation_center
-            self.cam.transformation.translation = self.objs[0].transformation.translation + pyrr.Vector3([0, 0.5, -0.8])
+            self.cam.transformation.translation = self.objs[0].transformation.translation + pyrr.Vector3([0, 1.7, -0.4])
         
 
         if glfw.KEY_I in self.touch and self.touch[glfw.KEY_I] > 0:

@@ -43,11 +43,11 @@ def main():
     o = Text('3ETI', np.array([-0.5, -0.2], np.float32), np.array([0.5, 0.3], np.float32), vao, 2, programGUI_id, texture)
     viewer.add_object(o)
 
-
+    # Centre la caméra sur le joueur au début
     viewer.cam.transformation.rotation_euler = viewer.objs[0].transformation.rotation_euler.copy() 
     viewer.cam.transformation.rotation_euler[pyrr.euler.index().yaw] += np.pi
     viewer.cam.transformation.rotation_center = viewer.objs[0].transformation.translation + viewer.objs[0].transformation.rotation_center
-    viewer.cam.transformation.translation = viewer.objs[0].transformation.translation + pyrr.Vector3([0, 0.5, -5])
+    viewer.cam.transformation.translation = viewer.objs[0].transformation.translation + pyrr.Vector3([0, 1.7, -0.4])
 
     viewer.run()
 
