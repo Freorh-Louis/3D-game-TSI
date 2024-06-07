@@ -49,21 +49,22 @@ def main():
     liste_param = [(p0 + n + c + t0), (p1 + n + c + t1), (p2 + n + c + t2), (p3 + n + c + t3),
                    (p4 + ns + c + t0), (p5 + ns + c + t1), (p6 + ns + c + t2), (p7 + ns + c + t3),
                    (p0 + nf + c + t0), (p1 + nf + c + t1),(p5 + nf + c + t2),(p4 + nf + c + t3),
-                   (p0 + ng + c + t0),(p3 + ng + c + t1), (p7 + ng + c + t2),(p4 + ng + c + t3),
+                   (p0 + ng + c + t0), (p3 + ng + c + t1), (p7 + ng + c + t2),(p4 + ng + c + t3),
                    (p2 + nd + c + t0), (p1 + nd + c + t1), (p5 + nd + c + t2), (p6 + nd + c + t3),
                    (p2 + na + c + t0), (p3 + na + c + t1), (p7 + na + c + t2), (p6 + na + c + t3)]
     
     texture = glutils.load_texture('grass.jpg')
-    print(liste_param[2])
+    
+    print(liste_param[0])
+    print([p0 + n + c + t0])
     for i in range(6):
-
         #sommets
-        m.vertices = np.array([liste_param[i],liste_param[i+1] ,liste_param[i+2] , liste_param[i+3], np.float32])
+        m.vertices = np.array([liste_param[4*i],liste_param[4*i+1],liste_param[4*i+2],liste_param[4*i+3]], np.float32)
         #faces
         m.faces = np.array([[0, 1, 2], [0, 2, 3]], np.uint32)
         #declaration de l'objet 3D
         o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, Transformation3D())
-        
+            
         #ajout de l'objet 3D
         viewer.add_object(o)
     
