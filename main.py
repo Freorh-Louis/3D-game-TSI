@@ -10,7 +10,6 @@ def main():
     viewer = ViewerGL()
 
     viewer.set_camera(Camera())
-    viewer.cam.transformation.translation.y = 2
     viewer.cam.transformation.rotation_center = viewer.cam.transformation.translation.copy()
 
     program3d_id = glutils.create_program_from_file('shader.vert', 'shader.frag')
@@ -37,13 +36,11 @@ def main():
     o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, Transformation3D())
     viewer.add_object(o)
 
-    vao = Text.initalize_geometry()
-    texture = glutils.load_texture('fontB.jpg')
-    o = Text('Bonjour les', np.array([-0.8, 0.3], np.float32), np.array([0.8, 0.8], np.float32), vao, 2, programGUI_id, texture)
-    viewer.add_object(o)
-    o = Text('3ETI', np.array([-0.5, -0.2], np.float32), np.array([0.5, 0.3], np.float32), vao, 2, programGUI_id, texture)
-    viewer.add_object(o)
-
+    
+    viewer.cam.transformation.rotation_euler = viewer.objs[0].transformation.rotation_euler.copy() 
+    viewer.cam.transformation.rotation_euler[pyrr.euler.index().yaw] += np.pi
+    viewer.cam.transformation.rotation_center = viewer.objs[0].transformation.translation + viewer.objs[0].transformation.rotation_center
+    viewer.cam.transformation.translation = viewer.objs[0].transformation.translation + pyrr.Vector3([0, 0.5, -0.8])
     viewer.run()
 
 
