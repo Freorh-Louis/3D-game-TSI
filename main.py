@@ -30,7 +30,7 @@ def main():
     # Gun
     m = Mesh.load_obj('Gun.obj')
     m.normalize()
-    m.apply_matrix(pyrr.matrix44.create_from_scale([2, 2, 2, 1]))
+    m.apply_matrix(pyrr.matrix44.create_from_scale([1, 1, 1, 0.5]))
     tr = Transformation3D()
     tr.translation.y = -np.amin(m.vertices, axis=0)[1]
     tr.translation.z = -2
@@ -67,7 +67,7 @@ def main():
                    (p2 + nd + c + t0), (p1 + nd + c + t1), (p5 + nd + c + t2), (p6 + nd + c + t3),
                    (p2 + na + c + t0), (p3 + na + c + t1), (p7 + na + c + t2), (p6 + na + c + t3)]
     
-    texture = glutils.load_texture('grass.jpg')
+    texture = glutils.load_texture('white.jpg')
     
     print(liste_param[0])
     print([p0 + n + c + t0])
@@ -86,17 +86,17 @@ def main():
     
     vao = Text.initalize_geometry()
     texture = glutils.load_texture('fontB.jpg')
-    o = Text('Bonjour les', np.array([-0.8, 0.3], np.float32), np.array([0.8, 0.8], np.float32), vao, 2, programGUI_id, texture)
-    viewer.add_object(o)
-    o = Text('3ETI', np.array([-0.5, -0.2], np.float32), np.array([0.5, 0.3], np.float32), vao, 2, programGUI_id, texture)
+    o = Text('.', np.array([-0.05, -0.05], np.float32), np.array([0.05, 0.05], np.float32), vao, 2, programGUI_id, texture) 
     viewer.add_object(o)
 
-    # Centre la caméra sur le joueur au début
+    # Centre la caméra et le pistolet sur le joueur au début
     viewer.cam.transformation.rotation_euler = viewer.objs[0].transformation.rotation_euler.copy() 
     viewer.cam.transformation.rotation_euler[pyrr.euler.index().yaw] += np.pi
     viewer.cam.transformation.rotation_center = viewer.objs[0].transformation.translation + viewer.objs[0].transformation.rotation_center
     viewer.cam.transformation.translation = viewer.objs[0].transformation.translation + pyrr.Vector3([0, 1.7, -0.4])
-
+    
+    viewer.objs[1].transformation.translation = viewer.objs[1].transformation.translation + pyrr.Vector3([-0.3, 1.7, 3])
+    viewer.objs[1].transformation.rotation_euler[pyrr.euler.index().yaw] -= np.pi/2
     viewer.run()
 
 
