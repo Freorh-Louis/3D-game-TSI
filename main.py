@@ -15,7 +15,8 @@ def main():
     program3d_id = glutils.create_program_from_file('shader.vert', 'shader.frag')
     programGUI_id = glutils.create_program_from_file('gui.vert', 'gui.frag')
 
-    m = Mesh.load_obj('stegosaurus.obj')
+    # Playable character
+    m = Mesh.load_obj('male.obj')
     m.normalize()
     m.apply_matrix(pyrr.matrix44.create_from_scale([2, 2, 2, 1]))
     tr = Transformation3D()
@@ -26,6 +27,19 @@ def main():
     o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr)
     viewer.add_object(o)
 
+    # Gun
+    m = Mesh.load_obj('Gun.obj')
+    m.normalize()
+    m.apply_matrix(pyrr.matrix44.create_from_scale([2, 2, 2, 1]))
+    tr = Transformation3D()
+    tr.translation.y = -np.amin(m.vertices, axis=0)[1]
+    tr.translation.z = -2
+    tr.rotation_center.z = 0.2
+    texture = glutils.load_texture('Gun.png')
+    o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr)
+    viewer.add_object(o)
+
+    # Map
     # Les mi sont les objets face base/ face sommet/face droite ... du cube qui sert de map
     # on défini dans l'ordre : objet, point, normale, couleur, texture, sommet, face que l'on
     # met dans une liste de parametre pour charger 6 fois un objet "face du cube"
