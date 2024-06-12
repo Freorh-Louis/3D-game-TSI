@@ -28,7 +28,7 @@ def main():
 
     # Les mi sont les objets face base/ face sommet/face droite ... du cube qui sert de map
     # on défini dans l'ordre : objet, point, normale, couleur, texture, sommet, face que l'on
-    # met dans une liste de paramètre pour charger 6 fois un objet "face du cube"
+    # met dans une liste de parametre pour charger 6 fois un objet "face du cube"
     
     # appel de l'objet
     m = Mesh()
@@ -55,8 +55,7 @@ def main():
     
     texture = glutils.load_texture('grass.jpg')
     
-    print(liste_param[0])
-    print([p0 + n + c + t0])
+    
     for i in range(6):
         #sommets
         m.vertices = np.array([liste_param[4*i],liste_param[4*i+1],liste_param[4*i+2],liste_param[4*i+3]], np.float32)
@@ -72,9 +71,9 @@ def main():
     
     vao = Text.initalize_geometry()
     texture = glutils.load_texture('fontB.jpg')
-    o = Text('Bonjour les', np.array([-0.8, 0.3], np.float32), np.array([0.8, 0.8], np.float32), vao, 2, programGUI_id, texture)
+    o = Text('Salut les', np.array([-0.8, 0.3], np.float32), np.array([0.8, 0.8], np.float32), vao, 2, programGUI_id, texture)
     viewer.add_object(o)
-    o = Text('3ETI', np.array([-0.5, -0.2], np.float32), np.array([0.5, 0.3], np.float32), vao, 2, programGUI_id, texture)
+    o = Text('Zobs', np.array([-0.5, -0.2], np.float32), np.array([0.5, 0.3], np.float32), vao, 2, programGUI_id, texture)
     viewer.add_object(o)
 
     # Centre la caméra sur le joueur au début
