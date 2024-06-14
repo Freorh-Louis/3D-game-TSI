@@ -56,7 +56,7 @@ def main():
     # Les mi sont les objets face base/ face sommet/face droite ... du cube qui sert de map
     # on défini dans l'ordre : objet, point, normale, couleur, texture, sommet, face que l'on
     # met dans une liste de parametre pour charger 6 fois un objet "face du cube"
-    
+
     # appel de l'objet
     m = Mesh()
     
@@ -82,16 +82,11 @@ def main():
     
     texture = glutils.load_texture('concrete.jpg')
     
-    
+    #boucle d'affichage des faces du cube
     for i in range(6):
-        #sommets
         m.vertices = np.array([liste_param[4*i],liste_param[4*i+1],liste_param[4*i+2],liste_param[4*i+3]], np.float32)
-        #faces
         m.faces = np.array([[0, 1, 2], [0, 2, 3]], np.uint32)
-        #declaration de l'objet 3D
         o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, Transformation3D())
-            
-        #ajout de l'objet 3D
         viewer.add_object(o)
     
 
@@ -107,8 +102,8 @@ def main():
     viewer.cam.transformation.rotation_center = viewer.objs[0].transformation.translation + viewer.objs[0].transformation.rotation_center
     viewer.cam.transformation.translation = viewer.objs[0].transformation.translation + pyrr.Vector3([0, 1.7, -0.4])
     
-    viewer.objs[1].transformation.translation = viewer.objs[1].transformation.translation + pyrr.Vector3([-0.3, 1.7, 3])
-    viewer.objs[1].transformation.rotation_euler[pyrr.euler.index().yaw] -= np.pi/2
+    viewer.objs[2].transformation.translation = viewer.objs[2].transformation.translation + pyrr.Vector3([-0.3, 1.7, 3])
+    viewer.objs[2].transformation.rotation_euler[pyrr.euler.index().yaw] -= np.pi/2
     viewer.run()
 
 
