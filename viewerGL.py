@@ -89,6 +89,9 @@ class ViewerGL:
                                               pyrr.Vector3([np.sin(dx/500)*3, np.sin(dy/500)*3, -6 + (np.cos(dx/500) + np.cos(dy/500))*3]))
         self.x_cursor, self.y_cursor = x, y
 
+    
+
+
 
     def key_callback(self, win, key, scancode, action, mods):
         # sortie du programme si appui sur la touche 'échappement'
@@ -173,16 +176,16 @@ class ViewerGL:
 
         if glfw.KEY_I in self.touch and self.touch[glfw.KEY_I] > 0:
             self.objs[1].transformation.translation += \
-                pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[1].transformation.rotation_euler), pyrr.Vector3([0, 0, 0.2]))
+                pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[2].transformation.rotation_euler), pyrr.Vector3([0, 0, 0.2]))
         if glfw.KEY_K in self.touch and self.touch[glfw.KEY_K] > 0:
             self.objs[1].transformation.translation -= \
-                pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[1].transformation.rotation_euler), pyrr.Vector3([0, 0, 0.2]))
+                pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[2].transformation.rotation_euler), pyrr.Vector3([0, 0, 0.2]))
         if glfw.KEY_J in self.touch and self.touch[glfw.KEY_J] > 0:
              self.objs[1].transformation.translation -= \
-                pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[1].transformation.rotation_euler), pyrr.Vector3([0.2, 0, 0]))
+                pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[2].transformation.rotation_euler), pyrr.Vector3([0.2, 0, 0]))
         if glfw.KEY_L in self.touch and self.touch[glfw.KEY_L] > 0:
             self.objs[1].transformation.translation -= \
-                pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[1].transformation.rotation_euler), pyrr.Vector3([0.2, 0, 0]))
+                pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[2].transformation.rotation_euler), pyrr.Vector3([0.2, 0, 0]))
         if glfw.KEY_O in self.touch and self.touch[glfw.KEY_O] > 0:
             self.objs[1].transformation.rotation_euler[pyrr.euler.index().yaw] -= 0.1
         
