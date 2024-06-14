@@ -128,8 +128,8 @@ def main():
     viewer.cam.transformation.rotation_center = viewer.objs[0].transformation.translation + viewer.objs[0].transformation.rotation_center
     viewer.cam.transformation.translation = viewer.objs[0].transformation.translation + pyrr.Vector3([0, 1.7, -0.4])
     
-    viewer.objs[2].transformation.translation = viewer.objs[2].transformation.translation + pyrr.Vector3([-0.3, 1.7, 3])
-    viewer.objs[2].transformation.rotation_euler[pyrr.euler.index().yaw] -= np.pi/2
+    viewer.objs[1].transformation.translation = viewer.objs[1].transformation.translation + pyrr.Vector3([-0.3, 1.7, 3])
+    viewer.objs[1].transformation.rotation_euler[pyrr.euler.index().yaw] -= np.pi/2
     viewer.run()
 
 
