@@ -6,6 +6,7 @@ import numpy as np
 import OpenGL.GL as GL
 import pyrr
 
+
 def main():
     viewer = ViewerGL()
 
@@ -17,6 +18,7 @@ def main():
 
     # Playable character
     m = Mesh.load_obj('male.obj')
+    #m.hitbox()
     m.normalize()
     m.apply_matrix(pyrr.matrix44.create_from_scale([2, 2, 2, 1]))
     tr = Transformation3D()
@@ -94,14 +96,13 @@ def main():
     o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr)
     viewer.add_object(o)
 
-    viewer.objs[4].transformation.translation = viewer.objs[4].transformation.translation + pyrr.Vector3([0, 0, 5]) """
+    viewer.objs[4].transformation.translation = viewer.objs[4].transformation.translation + pyrr.Vector3([0, 0, 5])"""
 
 
     # Map
     # Les mi sont les objets face base/ face sommet/face droite ... du cube qui sert de map
     # on défini dans l'ordre : objet, point, normale, couleur, texture, sommet, face que l'on
     # met dans une liste de parametre pour charger 6 fois un objet "face du cube"
-
     # appel de l'objet
     m = Mesh()
     

@@ -6,6 +6,7 @@ import pyrr
 import numpy as np
 from cpe3d import Object3D
 from random import randint
+from math import atan2
 
 class ViewerGL:
     def __init__(self):
@@ -44,6 +45,7 @@ class ViewerGL:
         glfw.set_cursor_pos(self.window, 400, 400)
         self.x_cursor, self.y_cursor = glfw.get_cursor_pos(self.window)
         glfw.set_input_mode(self.window, glfw.CURSOR, glfw.CURSOR_DISABLED)
+        self.hithoxes =[]
 
     def run(self):
         #spawn aleatoire d'UN adversaire
@@ -52,6 +54,21 @@ class ViewerGL:
         
         self.objs[2].transformation.translation += \
                 pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[1].transformation.rotation_euler), pyrr.Vector3([randint(25,50)*((-1)**randint(1,2)), 0, 0]))
+        #spawn aleatoire d'un contenaire
+        a1 = randint(10,40)
+        a2 = randint(10,40)
+        p1 = (-1)**randint(1,2)
+        p2 = (-1)**randint(1,2)
+        
+        self.objs[3].transformation.translation += \
+                pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[3].transformation.rotation_euler), pyrr.Vector3([0, 0, p1*a1]))
+        self.objs[4].transformation.translation += \
+                pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[4].transformation.rotation_euler), pyrr.Vector3([0, 0,p1*a1]))
+        
+        self.objs[3].transformation.translation += \
+                pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[3].transformation.rotation_euler), pyrr.Vector3([p2*a2, 0, 0]))
+        self.objs[4].transformation.translation += \
+                pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[4].transformation.rotation_euler), pyrr.Vector3([p2*a2, 0,0]))
         
         # boucle d'affichage
         while not glfw.window_should_close(self.window):
@@ -73,7 +90,7 @@ class ViewerGL:
                     self.update_camera(obj.program)
                 obj.draw()
             
-        
+            self.come()
 
             # changement de buffer d'affichage pour éviter un effet de scintillement
             glfw.swap_buffers(self.window)
@@ -106,7 +123,9 @@ class ViewerGL:
             self.turning = True
 
     
-
+    #def hitbox(self):
+        #for i in range(len(self.objs)):
+            #if hashitbox
 
     def key_callback(self, win, key, scancode, action, mods):
         # sortie du programme si appui sur la touche 'échappement'
@@ -154,6 +173,7 @@ class ViewerGL:
             print("Pas de variable uniforme : projection")
         GL.glUniformMatrix4fv(loc, 1, GL.GL_FALSE, self.cam.projection)
 
+    # Methode permettant de se deplacer
     def update_key(self):
         self.character_speed = 0.1
         self.movement = False
@@ -231,3 +251,16 @@ class ViewerGL:
                                               pyrr.Vector3([np.sin(alpha)*4, np.sin(beta)*4, -4 + np.cos(alpha)*4]))
 
         self.bullets_dir[0] = pyrr.Vector3([-np.sin(alpha), -np.sin(beta), np.cos(alpha)])
+    
+    #methode permettant de faire venir les NPC
+    def come(self):
+        p0 = self.objs[0].transformation.translation
+        p1 = self.objs[2].transformation.translation
+        dir = p0-p1
+        dir.y = 0
+        dir = pyrr.vector3.normalise(dir)
+        theta = atan2(dir[2],dir[0])
+        self.objs[2].transformation.rotation_euler[pyrr.euler.index().yaw] = theta - np.pi/2
+        p1 += 0.1*dir
+       
+        
