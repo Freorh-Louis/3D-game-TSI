@@ -80,8 +80,10 @@ class ViewerGL:
         # vec_rota = [dx/500, dy/500, 0]
         # rot = pyrr.matrix44.create_from_eulers(vec_rota)
         # self.objs[1].transformation.rotation_euler = pyrr.matrix44.multiply(self.objs[1].transformation.rotation_euler, rot)
+        alpha = self.objs[0].transformation.rotation_euler[pyrr.euler.index().yaw]
         self.objs[1].transformation.rotation_euler[pyrr.euler.index().yaw] += dx/500
-        self.objs[1].transformation.rotation_euler[pyrr.euler.index().roll] -= dy/500
+        self.objs[1].transformation.rotation_euler[pyrr.euler.index().roll] += (-dy/500)*np.cos(alpha)
+        self.objs[1].transformation.rotation_euler[pyrr.euler.index().pitch] += (-dy/500)*np.sin(alpha)
         self.objs[1].transformation.translation -= \
                 pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), 
                                               pyrr.Vector3([np.sin(dx/500)*3, np.sin(dy/500)*3, -6 + (np.cos(dx/500) + np.cos(dy/500))*3]))
