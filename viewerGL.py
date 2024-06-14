@@ -6,6 +6,7 @@ import pyrr
 import numpy as np
 from cpe3d import Object3D
 from random import randint
+from math import atan2
 
 class ViewerGL:
     def __init__(self):
@@ -31,12 +32,12 @@ class ViewerGL:
         # choix de la couleur de fond
         GL.glClearColor(0.5, 0.6, 0.9, 1.0)
         print(f"OpenGL: {GL.glGetString(GL.GL_VERSION).decode('ascii')}")
-
         self.objs = []
         self.touch = {}
         glfw.set_cursor_pos(self.window, 400, 400)
         self.x_cursor, self.y_cursor = glfw.get_cursor_pos(self.window)
         glfw.set_input_mode(self.window, glfw.CURSOR, glfw.CURSOR_DISABLED)
+        self.hithoxes =[]
 
     def run(self):
         #spawn aleatoire d'UN adversaire
@@ -45,6 +46,21 @@ class ViewerGL:
         
         self.objs[2].transformation.translation += \
                 pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[1].transformation.rotation_euler), pyrr.Vector3([randint(25,50)*((-1)**randint(1,2)), 0, 0]))
+        #spawn aleatoire d'un contenaire
+        a1 = randint(10,40)
+        a2 = randint(10,40)
+        p1 = (-1)**randint(1,2)
+        p2 = (-1)**randint(1,2)
+        
+        self.objs[3].transformation.translation += \
+                pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[3].transformation.rotation_euler), pyrr.Vector3([0, 0, p1*a1]))
+        self.objs[4].transformation.translation += \
+                pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[4].transformation.rotation_euler), pyrr.Vector3([0, 0,p1*a1]))
+        
+        self.objs[3].transformation.translation += \
+                pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[3].transformation.rotation_euler), pyrr.Vector3([p2*a2, 0, 0]))
+        self.objs[4].transformation.translation += \
+                pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[4].transformation.rotation_euler), pyrr.Vector3([p2*a2, 0,0]))
         
         # boucle d'affichage
         while not glfw.window_should_close(self.window):
@@ -52,7 +68,6 @@ class ViewerGL:
             GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
 
             self.update_key()
-            
             self.cursor_camera()
 
             for obj in self.objs:
@@ -61,7 +76,7 @@ class ViewerGL:
                     self.update_camera(obj.program)
                 obj.draw()
             
-        
+            self.come()
 
             # changement de buffer d'affichage pour éviter un effet de scintillement
             glfw.swap_buffers(self.window)
@@ -88,7 +103,9 @@ class ViewerGL:
         self.x_cursor, self.y_cursor = x, y
 
     
-
+    #def hitbox(self):
+        #for i in range(len(self.objs)):
+            #if hashitbox
 
 
     def key_callback(self, win, key, scancode, action, mods):
@@ -134,6 +151,7 @@ class ViewerGL:
             print("Pas de variable uniforme : projection")
         GL.glUniformMatrix4fv(loc, 1, GL.GL_FALSE, self.cam.projection)
 
+    # Methode permettant de se deplacer
     def update_key(self):
         self.character_speed = 0.1
         if glfw.KEY_LEFT_SHIFT in self.touch and self.touch[glfw.KEY_LEFT_SHIFT] > 0:
@@ -171,25 +189,22 @@ class ViewerGL:
             self.cam.transformation.rotation_center = self.objs[0].transformation.translation + self.objs[0].transformation.rotation_center
             self.cam.transformation.translation = self.objs[0].transformation.translation + pyrr.Vector3([0, 1.7, -0.4])
         
-
-        if glfw.KEY_I in self.touch and self.touch[glfw.KEY_I] > 0:
-            self.objs[1].transformation.translation += \
-                pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[2].transformation.rotation_euler), pyrr.Vector3([0, 0, 0.2]))
-        if glfw.KEY_K in self.touch and self.touch[glfw.KEY_K] > 0:
-            self.objs[1].transformation.translation -= \
-                pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[2].transformation.rotation_euler), pyrr.Vector3([0, 0, 0.2]))
-        if glfw.KEY_J in self.touch and self.touch[glfw.KEY_J] > 0:
-             self.objs[1].transformation.translation -= \
-                pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[2].transformation.rotation_euler), pyrr.Vector3([0.2, 0, 0]))
-        if glfw.KEY_L in self.touch and self.touch[glfw.KEY_L] > 0:
-            self.objs[1].transformation.translation -= \
-                pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[2].transformation.rotation_euler), pyrr.Vector3([0.2, 0, 0]))
-        if glfw.KEY_O in self.touch and self.touch[glfw.KEY_O] > 0:
-            self.objs[1].transformation.rotation_euler[pyrr.euler.index().yaw] -= 0.1
         
         if glfw.KEY_SPACE in self.touch and self.touch[glfw.KEY_SPACE] > 0:
             self.cam.transformation.rotation_euler = self.objs[0].transformation.rotation_euler.copy() 
             self.cam.transformation.rotation_euler[pyrr.euler.index().yaw] += np.pi
             self.cam.transformation.rotation_center = self.objs[0].transformation.translation + self.objs[0].transformation.rotation_center
             self.cam.transformation.translation = self.objs[0].transformation.translation + pyrr.Vector3([0, 0.5, -0.8])
-            
+    
+    #methode permettant de faire venir les NPC
+    def come(self):
+        p0 = self.objs[0].transformation.translation
+        p1 = self.objs[2].transformation.translation
+        dir = p0-p1
+        dir.y = 0
+        dir = pyrr.vector3.normalise(dir)
+        theta = atan2(dir[2],dir[0])
+        self.objs[2].transformation.rotation_euler[pyrr.euler.index().yaw] = theta - np.pi/2
+        p1 += 0.1*dir
+       
+        

@@ -15,7 +15,7 @@ class Object:
         self.program = program
         self.texture = texture
         self.visible = True
-
+        
     def draw(self):
         if self.visible : 
             GL.glUseProgram(self.program)
@@ -27,6 +27,8 @@ class Object3D(Object):
     def __init__(self, vao, nb_triangle, program, texture, transformation):
         super().__init__(vao, nb_triangle, program, texture)
         self.transformation = transformation
+        #hitbox
+        #hasHitbox
 
     def draw(self):
         GL.glUseProgram(self.program)
