@@ -23,9 +23,11 @@ def main():
     tr.translation.y = -np.amin(m.vertices, axis=0)[1]
     tr.translation.z = -2
     tr.rotation_center.z = 0.2
+    print(np.amin(m.vertices, axis=0)[:3], np.amax(m.vertices, axis=0)[:3])
     texture = glutils.load_texture('white.jpg')
     o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr)
     viewer.add_object(o)
+    viewer.objs[0].visible = False
 
     # Gun
     m = Mesh.load_obj('Gun.obj')
@@ -38,6 +40,8 @@ def main():
     texture = glutils.load_texture('Gun.png')
     o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr)
     viewer.add_object(o)
+    viewer.objs[1].transformation.translation = viewer.objs[1].transformation.translation + pyrr.Vector3([-0.3, 1.7, 3])
+    viewer.objs[1].transformation.rotation_euler[pyrr.euler.index().yaw] -= np.pi/2
 
     # Non playable character
     m2 = Mesh.load_obj('male.obj')
@@ -51,7 +55,22 @@ def main():
     o2 = Object3D(m2.load_to_gpu(), m2.get_nb_triangles(), program3d_id, texture, tr)
     viewer.add_object(o2)
 
-    # Container
+    # Player bullets
+    m = Mesh.load_obj('Sphere.obj')
+    m.normalize()
+    m.apply_matrix(pyrr.matrix44.create_from_scale([0.1, 0.1, 0.1, 0.05]))
+    tr = Transformation3D()
+    tr.translation.y = -np.amin(m.vertices, axis=0)[1]
+    tr.translation.z = -2
+    tr.rotation_center.z = 0.2
+    texture = glutils.load_texture('green.png')
+    for i in range(5):
+        o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr)
+        viewer.add_object(o)
+        viewer.objs[3 + i].visible = False
+    
+
+    """ # Container
     m = Mesh.load_obj('cube.obj')
     m.normalize()
     m.apply_matrix(pyrr.matrix44.create_from_scale([2, 2, 2, 1]))
@@ -75,7 +94,7 @@ def main():
     o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr)
     viewer.add_object(o)
 
-    viewer.objs[4].transformation.translation = viewer.objs[4].transformation.translation + pyrr.Vector3([0, 0, 5])
+    viewer.objs[4].transformation.translation = viewer.objs[4].transformation.translation + pyrr.Vector3([0, 0, 5]) """
 
 
     # Map
@@ -122,14 +141,12 @@ def main():
     o = Text('.', np.array([-0.05, -0.05], np.float32), np.array([0.05, 0.05], np.float32), vao, 2, programGUI_id, texture) 
     viewer.add_object(o)
 
-    # Centre la caméra et le pistolet sur le joueur au début
+    # Centre la caméra sur le joueur au début
     viewer.cam.transformation.rotation_euler = viewer.objs[0].transformation.rotation_euler.copy() 
     viewer.cam.transformation.rotation_euler[pyrr.euler.index().yaw] += np.pi
     viewer.cam.transformation.rotation_center = viewer.objs[0].transformation.translation + viewer.objs[0].transformation.rotation_center
     viewer.cam.transformation.translation = viewer.objs[0].transformation.translation + pyrr.Vector3([0, 1.7, -0.4])
     
-    viewer.objs[1].transformation.translation = viewer.objs[1].transformation.translation + pyrr.Vector3([-0.3, 1.7, 3])
-    viewer.objs[1].transformation.rotation_euler[pyrr.euler.index().yaw] -= np.pi/2
     viewer.run()
 
 
