@@ -40,10 +40,10 @@ class ViewerGL:
 
     def run(self):
         #spawn aleatoire d'UN adversaire
-        self.objs[1].transformation.translation += \
+        self.objs[2].transformation.translation += \
                 pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[1].transformation.rotation_euler), pyrr.Vector3([0, 0, randint(25,50)*((-1)**randint(1,2))]))
         
-        self.objs[1].transformation.translation += \
+        self.objs[2].transformation.translation += \
                 pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[1].transformation.rotation_euler), pyrr.Vector3([randint(25,50)*((-1)**randint(1,2)), 0, 0]))
         
         # boucle d'affichage
@@ -76,6 +76,10 @@ class ViewerGL:
         self.cam.transformation.rotation_euler[pyrr.euler.index().yaw] += dx/500
         self.cam.transformation.rotation_euler[pyrr.euler.index().roll] += dy/500
         self.objs[0].transformation.rotation_euler[pyrr.euler.index().yaw] += dx/500
+        # self.objs[1].transformation.rotation_euler[pyrr.euler.index().yaw] += dx/500
+        # vec_rota = [dx/500, dy/500, 0]
+        # rot = pyrr.matrix44.create_from_eulers(vec_rota)
+        # self.objs[1].transformation.rotation_euler = pyrr.matrix44.multiply(self.objs[1].transformation.rotation_euler, rot)
         self.objs[1].transformation.rotation_euler[pyrr.euler.index().yaw] += dx/500
         self.objs[1].transformation.rotation_euler[pyrr.euler.index().roll] -= dy/500
         self.objs[1].transformation.translation -= \
