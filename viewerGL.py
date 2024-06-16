@@ -40,7 +40,7 @@ class ViewerGL:
 
         self.objs = []
         self.touch = {}
-        self.bullets_dir = [None for i in range(5)]
+        self.bullets_dir = [None for i in range(6)]
         self.last_shoot_state = 0
         glfw.set_cursor_pos(self.window, 400, 400)
         self.x_cursor, self.y_cursor = glfw.get_cursor_pos(self.window)
@@ -50,12 +50,14 @@ class ViewerGL:
     def run(self):
         #spawn aleatoire d'UN adversaire
         self.objs[2].transformation.translation += \
-                pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[1].transformation.rotation_euler), pyrr.Vector3([0, 0, randint(25,50)*((-1)**randint(1,2))]))
+                pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[1].transformation.rotation_euler), 
+                                              pyrr.Vector3([randint(25,50)*((-1)**randint(1,2)), 0, randint(25,50)*((-1)**randint(1,2))]))
         
-        self.objs[2].transformation.translation += \
-                pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[1].transformation.rotation_euler), pyrr.Vector3([randint(25,50)*((-1)**randint(1,2)), 0, 0]))
+        self.objs[9].transformation.translation = self.objs[2].transformation.translation + pyrr.Vector3([-0.3, 1.7, 3])
+        # self.objs[9].transformation.rotation_euler[pyrr.euler.index().yaw] -= np.pi/2
+        
         #spawn aleatoire d'un contenaire
-        a1 = randint(10,40)
+        """ a1 = randint(10,40)
         a2 = randint(10,40)
         p1 = (-1)**randint(1,2)
         p2 = (-1)**randint(1,2)
@@ -68,7 +70,7 @@ class ViewerGL:
         self.objs[3].transformation.translation += \
                 pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[3].transformation.rotation_euler), pyrr.Vector3([p2*a2, 0, 0]))
         self.objs[4].transformation.translation += \
-                pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[4].transformation.rotation_euler), pyrr.Vector3([p2*a2, 0,0]))
+                pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[4].transformation.rotation_euler), pyrr.Vector3([p2*a2, 0,0])) """
         
         # boucle d'affichage
         while not glfw.window_should_close(self.window):
@@ -80,9 +82,11 @@ class ViewerGL:
 
             game_speed = 0.1*self.turning + 0.4*self.movement + 0.5*self.sprint
 
-            for i in range(5):
+            for i in range(6):
                 if self.objs[3 + i].visible:
                     self.objs[3 + i].transformation.translation += self.bullets_dir[i]*game_speed
+
+            self.come(game_speed)
 
             for obj in self.objs:
                 GL.glUseProgram(obj.program)
@@ -90,7 +94,6 @@ class ViewerGL:
                     self.update_camera(obj.program)
                 obj.draw()
             
-            self.come()
 
             # changement de buffer d'affichage pour éviter un effet de scintillement
             glfw.swap_buffers(self.window)
@@ -173,6 +176,52 @@ class ViewerGL:
             print("Pas de variable uniforme : projection")
         GL.glUniformMatrix4fv(loc, 1, GL.GL_FALSE, self.cam.projection)
 
+
+    def player_shoot(self):
+        first_usable_bullet_adress = 0
+        for i in range(6):
+            if not self.objs[8 - i].visible:
+                first_usable_bullet_adress = 8 - i
+
+        if first_usable_bullet_adress != 0:
+            self.objs[first_usable_bullet_adress].visible = True
+            self.objs[first_usable_bullet_adress].transformation.translation = self.objs[0].transformation.translation + pyrr.Vector3([0, 1.6, 4])
+            alpha = self.objs[0].transformation.rotation_euler[pyrr.euler.index().yaw]
+            beta = self.cam.transformation.rotation_euler[pyrr.euler.index().roll]
+            self.objs[first_usable_bullet_adress].transformation.translation -= \
+                    pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), 
+                                                pyrr.Vector3([np.sin(alpha)*4, np.sin(beta)*4, -4 + np.cos(alpha)*4]))
+
+            self.bullets_dir[first_usable_bullet_adress - 3] = pyrr.Vector3([-np.sin(alpha), -np.sin(beta), np.cos(alpha)])
+    
+    def NPC_shoot(self):
+        first_usable_bullet_adress = 0
+        for i in range(6):
+            if not self.objs[8 - i].visible:
+                first_usable_bullet_adress = 8 - i
+
+        if first_usable_bullet_adress != 0:
+            self.objs[first_usable_bullet_adress].visible = True
+            alpha = self.objs[2].transformation.rotation_euler[pyrr.euler.index().yaw]
+            self.objs[first_usable_bullet_adress].transformation.translation = self.objs[2].transformation.translation + pyrr.Vector3([-2*np.sin(alpha), 1, 2*np.cos(alpha)])
+
+            self.bullets_dir[first_usable_bullet_adress - 3] = pyrr.Vector3([-np.sin(alpha), 0, np.cos(alpha)])
+    
+    #methode permettant de faire venir les NPC
+    def come(self, game_speed):
+        p0 = self.objs[0].transformation.translation
+        p1 = self.objs[2].transformation.translation
+        dir = p0-p1
+        dir.y = 0
+        dir = pyrr.vector3.normalise(dir)
+        theta = atan2(dir[2],dir[0])
+        self.objs[2].transformation.rotation_euler[pyrr.euler.index().yaw] = theta - np.pi/2
+        self.objs[9].transformation.rotation_euler[pyrr.euler.index().yaw] = theta + np.pi
+        alpha = theta - np.pi/2
+        self.objs[9].transformation.translation = self.objs[2].transformation.translation + pyrr.Vector3([-2*np.sin(alpha), 1, 2*np.cos(alpha)])
+        p1 += 0.05*dir*game_speed
+
+
     # Methode permettant de se deplacer
     def update_key(self):
         self.character_speed = 0.1
@@ -236,31 +285,11 @@ class ViewerGL:
             self.cam.transformation.translation = self.objs[0].transformation.translation + pyrr.Vector3([0, 0.5, -0.8])
         
         if glfw.MOUSE_BUTTON_LEFT in self.touch and self.touch[glfw.MOUSE_BUTTON_LEFT] > 0 and self.last_shoot_state == 0:
-            self.shoot()
+            self.player_shoot()
 
         if glfw.MOUSE_BUTTON_LEFT in self.touch:    
             self.last_shoot_state = self.touch[glfw.MOUSE_BUTTON_LEFT]
 
-    def shoot(self):
-        self.objs[3].visible = True
-        self.objs[3].transformation.translation = self.objs[0].transformation.translation + pyrr.Vector3([0, 1.6, 4])
-        alpha = self.objs[0].transformation.rotation_euler[pyrr.euler.index().yaw]
-        beta = self.cam.transformation.rotation_euler[pyrr.euler.index().roll]
-        self.objs[3].transformation.translation -= \
-                pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), 
-                                              pyrr.Vector3([np.sin(alpha)*4, np.sin(beta)*4, -4 + np.cos(alpha)*4]))
-
-        self.bullets_dir[0] = pyrr.Vector3([-np.sin(alpha), -np.sin(beta), np.cos(alpha)])
     
-    #methode permettant de faire venir les NPC
-    def come(self):
-        p0 = self.objs[0].transformation.translation
-        p1 = self.objs[2].transformation.translation
-        dir = p0-p1
-        dir.y = 0
-        dir = pyrr.vector3.normalise(dir)
-        theta = atan2(dir[2],dir[0])
-        self.objs[2].transformation.rotation_euler[pyrr.euler.index().yaw] = theta - np.pi/2
-        p1 += 0.1*dir
        
         
