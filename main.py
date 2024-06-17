@@ -31,31 +31,30 @@ def main():
     viewer.add_object(o)
     viewer.objs[0].visible = False
 
-    # Gun
+    # NPCs
+    texture = glutils.load_texture('red.jpg')
+    for i in range(6):
+        tr = Transformation3D()
+        tr.translation.y = -np.amin(m.vertices, axis=0)[1]
+        tr.translation.z = -2
+        tr.rotation_center.z = 0.2
+        o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr)
+        viewer.add_object(o)
+
+    # Guns
     m = Mesh.load_obj('Gun.obj')
     m.normalize()
     m.apply_matrix(pyrr.matrix44.create_from_scale([1, 1, 1, 0.5]))
-    tr = Transformation3D()
-    tr.translation.y = -np.amin(m.vertices, axis=0)[1]
-    tr.translation.z = -2
-    tr.rotation_center.z = 0.2
     texture = glutils.load_texture('Gun.png')
-    o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr)
-    viewer.add_object(o)
-    viewer.objs[1].transformation.translation = viewer.objs[1].transformation.translation + pyrr.Vector3([-0.3, 1.7, 3])
-    viewer.objs[1].transformation.rotation_euler[pyrr.euler.index().yaw] -= np.pi/2
-
-    # Non playable character
-    m2 = Mesh.load_obj('male.obj')
-    m2.normalize()
-    m2.apply_matrix(pyrr.matrix44.create_from_scale([2, 2, 2, 1]))
-    tr = Transformation3D()
-    tr.translation.y = -np.amin(m2.vertices, axis=0)[1]
-    tr.translation.z = -2
-    tr.rotation_center.z = 0.2
-    texture = glutils.load_texture('red.jpg')
-    o2 = Object3D(m2.load_to_gpu(), m2.get_nb_triangles(), program3d_id, texture, tr)
-    viewer.add_object(o2)
+    for i in range(4):
+        tr = Transformation3D()
+        tr.translation.y = -np.amin(m.vertices, axis=0)[1]
+        tr.translation.z = -2
+        tr.rotation_center.z = 0.2
+        o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr)
+        viewer.add_object(o)
+    viewer.objs[7].transformation.translation = viewer.objs[7].transformation.translation + pyrr.Vector3([-0.3, 1.7, 3])
+    viewer.objs[7].transformation.rotation_euler[pyrr.euler.index().yaw] -= np.pi/2
 
     # Player bullets
     m = Mesh.load_obj('Sphere.obj')
@@ -69,19 +68,19 @@ def main():
         tr.rotation_center.z = 0.2
         o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr)
         viewer.add_object(o)
-        viewer.objs[3 + i].visible = False
+        viewer.objs[11 + i].visible = False
+    
+    # NPCs bullets
+    texture = glutils.load_texture('red1.jpg')
+    for i in range(3):
+        tr = Transformation3D()
+        tr.translation.y = -np.amin(m.vertices, axis=0)[1]
+        tr.translation.z = -2
+        tr.rotation_center.z = 0.2
+        o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr)
+        viewer.add_object(o)
+        viewer.objs[17 + i].visible = False
 
-    # NPC Gun
-    m = Mesh.load_obj('Gun.obj')
-    m.normalize()
-    m.apply_matrix(pyrr.matrix44.create_from_scale([1, 1, 1, 0.5]))
-    tr = Transformation3D()
-    tr.translation.y = -np.amin(m.vertices, axis=0)[1]
-    tr.translation.z = -2
-    tr.rotation_center.z = 0.2
-    texture = glutils.load_texture('Gun.png')
-    o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr)
-    viewer.add_object(o)
     
 
     """ # Container
