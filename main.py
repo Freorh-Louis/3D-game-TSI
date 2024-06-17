@@ -72,7 +72,7 @@ def main():
         viewer.objs[3 + i].visible = False
     
 
-    """ # Container
+    # Container
     m = Mesh.load_obj('cube.obj')
     m.normalize()
     m.apply_matrix(pyrr.matrix44.create_from_scale([2, 2, 2, 1]))
@@ -96,7 +96,7 @@ def main():
     o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr)
     viewer.add_object(o)
 
-    viewer.objs[4].transformation.translation = viewer.objs[4].transformation.translation + pyrr.Vector3([0, 0, 5])"""
+    viewer.objs[4].transformation.translation = viewer.objs[4].transformation.translation + pyrr.Vector3([0, 0, 5])
 
 
     # Map
