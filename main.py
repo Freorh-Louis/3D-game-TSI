@@ -18,16 +18,14 @@ def main():
 
     # Playable character
     m = Mesh.load_obj('male.obj')
-    #m.hitbox()
     m.normalize()
     m.apply_matrix(pyrr.matrix44.create_from_scale([2, 2, 2, 1]))
     tr = Transformation3D()
     tr.translation.y = -np.amin(m.vertices, axis=0)[1]
     tr.translation.z = -2
     tr.rotation_center.z = 0.2
-    # print(np.amin(m.vertices, axis=0)[:3], np.amax(m.vertices, axis=0)[:3])
     texture = glutils.load_texture('white.jpg')
-    o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr)
+    o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr, True, m.hitbox)
     viewer.add_object(o)
     viewer.objs[0].visible = False
 
@@ -40,7 +38,7 @@ def main():
     tr.translation.z = -2
     tr.rotation_center.z = 0.2
     texture = glutils.load_texture('Gun.png')
-    o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr)
+    o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr, False, 0)
     viewer.add_object(o)
     viewer.objs[1].transformation.translation = viewer.objs[1].transformation.translation + pyrr.Vector3([-0.3, 1.7, 3])
     viewer.objs[1].transformation.rotation_euler[pyrr.euler.index().yaw] -= np.pi/2
@@ -54,12 +52,13 @@ def main():
     tr.translation.z = -2
     tr.rotation_center.z = 0.2
     texture = glutils.load_texture('red.jpg')
-    o2 = Object3D(m2.load_to_gpu(), m2.get_nb_triangles(), program3d_id, texture, tr)
+    o2 = Object3D(m2.load_to_gpu(), m2.get_nb_triangles(), program3d_id, texture, tr, True, m2.hitbox)
     viewer.add_object(o2)
 
     # Player bullets
     m = Mesh.load_obj('Sphere.obj')
     m.normalize()
+    m.hitbox()
     m.apply_matrix(pyrr.matrix44.create_from_scale([0.1, 0.1, 0.1, 0.05]))
     texture = glutils.load_texture('green.png')
     for i in range(6):
@@ -67,7 +66,7 @@ def main():
         tr.translation.y = -np.amin(m.vertices, axis=0)[1]
         tr.translation.z = -2
         tr.rotation_center.z = 0.2
-        o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr)
+        o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr, True, m.hitbox())
         viewer.add_object(o)
         viewer.objs[3 + i].visible = False
 
@@ -80,7 +79,7 @@ def main():
     tr.translation.z = -2
     tr.rotation_center.z = 0.2
     texture = glutils.load_texture('Gun.png')
-    o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr)
+    o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr,False,0)
     viewer.add_object(o)
     
 
@@ -93,7 +92,7 @@ def main():
     tr.translation.z = -2
     tr.rotation_center.z = 0.2
     texture = glutils.load_texture('container.jpg')
-    o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr)
+    o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr,False,0)
     viewer.add_object(o)
 
     # Container
@@ -105,7 +104,7 @@ def main():
     tr.translation.z = -2
     tr.rotation_center.z = 0.2
     texture = glutils.load_texture('container.jpg')
-    o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr)
+    o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr,False,0)
     viewer.add_object(o)
 
     viewer.objs[4].transformation.translation = viewer.objs[4].transformation.translation + pyrr.Vector3([0, 0, 5])
@@ -144,7 +143,7 @@ def main():
     for i in range(6):
         m.vertices = np.array([liste_param[4*i],liste_param[4*i+1],liste_param[4*i+2],liste_param[4*i+3]], np.float32)
         m.faces = np.array([[0, 1, 2], [0, 2, 3]], np.uint32)
-        o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, Transformation3D())
+        o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, Transformation3D(), False, 0)
         viewer.add_object(o)
     
 

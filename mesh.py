@@ -18,11 +18,11 @@ class Mesh():
         amp = np.amax(max[:3]-min[:3])/2
         self.vertices = np.array([np.concatenate((((v[:3]-avg[:3])/amp), v[3:])) for v in self.vertices], np.float32)
     
-    #def hitbox(self):
+    def hitbox(self):
+        p0 = np.amin(self.vertices, axis = 0)[:3]
+        p1 = np.amax(self.vertices, axis = 0)[:3]
+        return( [p0,p1] )
         
-
-        #for v in self.vertices:
-            #print(v)
 
     
     

@@ -37,7 +37,7 @@ class ViewerGL:
         self.movement = False
         self.sprint = False
         self.turning = False
-
+        self.hitboxList = []
         self.objs = []
         self.touch = {}
         self.bullets_dir = [None for i in range(6)]
@@ -45,7 +45,11 @@ class ViewerGL:
         glfw.set_cursor_pos(self.window, 400, 400)
         self.x_cursor, self.y_cursor = glfw.get_cursor_pos(self.window)
         glfw.set_input_mode(self.window, glfw.CURSOR, glfw.CURSOR_DISABLED)
-        self.hithoxes =[]
+        #initialisation de la liste hitboxList
+        """for i in range(len(self.objs)):
+            if self.objs[i].hasHitbox :
+                self.hitboxList.append(self.objs[i].hitbox)"""
+        
 
     def run(self):
         #spawn aleatoire d'UN adversaire
@@ -126,9 +130,10 @@ class ViewerGL:
             self.turning = True
 
     
-    #def hitbox(self):
-        #for i in range(len(self.objs)):
-            #if hashitbox
+    #def hitbox_interaction(self):
+        
+        #for i in range(len(self.hitboxList)):
+            #if
 
     def key_callback(self, win, key, scancode, action, mods):
         # sortie du programme si appui sur la touche 'échappement'
@@ -228,7 +233,7 @@ class ViewerGL:
         self.movement = False
         self.sprint = False
         is_sprinting = False
-
+        
         if glfw.KEY_LEFT_SHIFT in self.touch and self.touch[glfw.KEY_LEFT_SHIFT] > 0:
             self.character_speed = 0.2
             is_sprinting = True
