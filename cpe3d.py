@@ -65,11 +65,13 @@ class Camera:
         self.projection = projection
 
 class Text(Object):
-    def __init__(self, value, bottomLeft, topRight, vao, nb_triangle, program, texture):
+    def __init__(self, value, bottomLeft, topRight, vao, nb_triangle, program, texture,hasHitbox,hitbox):
         self.value = value
         self.bottomLeft = bottomLeft
         self.topRight = topRight
         super().__init__(vao, nb_triangle, program, texture)
+        self.hasHitbox = hasHitbox
+        self.hitbox = hitbox
 
     def draw(self):
         GL.glUseProgram(self.program)

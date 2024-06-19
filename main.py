@@ -25,7 +25,7 @@ def main():
     tr.translation.z = -2
     tr.rotation_center.z = 0.2
     texture = glutils.load_texture('white.jpg')
-    o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr, True, m.hitbox)
+    o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr, True, m.hitbox())
     viewer.add_object(o)
     viewer.objs[0].visible = False
 
@@ -36,7 +36,7 @@ def main():
         tr.translation.y = -np.amin(m.vertices, axis=0)[1]
         tr.translation.z = -2
         tr.rotation_center.z = 0.2
-        o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr)
+        o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr,True, m.hitbox())
         viewer.add_object(o)
 
     # Guns
@@ -49,7 +49,7 @@ def main():
         tr.translation.y = -np.amin(m.vertices, axis=0)[1]
         tr.translation.z = -2
         tr.rotation_center.z = 0.2
-        o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr)
+        o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr, False, 0)
         viewer.add_object(o)
     viewer.objs[7].transformation.translation = viewer.objs[7].transformation.translation + pyrr.Vector3([-0.3, 1.7, 3])
     viewer.objs[7].transformation.rotation_euler[pyrr.euler.index().yaw] -= np.pi/2
@@ -76,7 +76,7 @@ def main():
         tr.translation.y = -np.amin(m.vertices, axis=0)[1]
         tr.translation.z = -2
         tr.rotation_center.z = 0.2
-        o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr)
+        o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr,True, m.hitbox())
         viewer.add_object(o)
         viewer.objs[17 + i].visible = False
 
@@ -149,7 +149,7 @@ def main():
     
     vao = Text.initalize_geometry()
     texture = glutils.load_texture('fontB.jpg')
-    o = Text('.', np.array([-0.05, -0.05], np.float32), np.array([0.05, 0.05], np.float32), vao, 2, programGUI_id, texture) 
+    o = Text('.', np.array([-0.05, -0.05], np.float32), np.array([0.05, 0.05], np.float32), vao, 2, programGUI_id, texture,False,0) 
     viewer.add_object(o)
 
     # Centre la caméra sur le joueur au début
