@@ -208,7 +208,11 @@ class ViewerGL:
             self.objs[first_usable_bullet_adress].transformation.translation -= \
                     pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), 
                                                 pyrr.Vector3([np.sin(alpha)*4, np.sin(beta)*4, -4 + np.cos(alpha)*4]))
-
+            #self.hitboxList[indice_correct][0] -= pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), 
+                                                #pyrr.Vector3([np.sin(alpha)*4, np.sin(beta)*4, -4 + np.cos(alpha)*4])) 
+            #self.hitboxList[indice_correct][1] -= pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), 
+                                                #pyrr.Vector3([np.sin(alpha)*4, np.sin(beta)*4, -4 + np.cos(alpha)*4])) 
+            
             self.bullets_dir[first_usable_bullet_adress - 11] = pyrr.Vector3([-np.sin(alpha), -np.sin(beta), np.cos(alpha)])
     
     def NPC_shoot(self, NPC_id):
@@ -234,7 +238,8 @@ class ViewerGL:
             alpha = theta - np.pi/2
             self.objs[7 + NPC_id].transformation.translation = self.objs[NPC_id].transformation.translation + pyrr.Vector3([-2*np.sin(alpha), 1, 2*np.cos(alpha)])
         p1 += 0.05*dir*game_speed
-        #self.hitboxList[NPC_id+1][0] += 0.05*dir*game_speed
+        #self.hitboxList[indice_correct][0] += 0.05*dir*game_speed
+        #self.hitboxList[indice_correct][1] += 0.05*dir*game_speed
 
     # Methode permettant de se deplacer
     def update_key(self):
@@ -269,9 +274,9 @@ class ViewerGL:
             self.objs[0].transformation.translation -= \
                 pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), pyrr.Vector3([0, 0, self.character_speed]))
             
-            self.hitboxList[0][0].transformation.translation -= \
+            self.hitboxList[0][0] -= \
                 pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), pyrr.Vector3([0, 0, self.character_speed]))
-            self.hitboxList[0][1].transformation.translation -= \
+            self.hitboxList[0][1] -= \
                 pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), pyrr.Vector3([0, 0, self.character_speed]))
 
             self.objs[7].transformation.translation -= \
