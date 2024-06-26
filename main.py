@@ -49,7 +49,7 @@ def main():
         tr.translation.y = -np.amin(m.vertices, axis=0)[1]
         tr.translation.z = -2
         tr.rotation_center.z = 0.2
-        o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr, False, 0)
+        o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr, True, 0)
         viewer.add_object(o)
     viewer.objs[7].transformation.translation = viewer.objs[7].transformation.translation + pyrr.Vector3([-0.3, 1.7, 3])
     viewer.objs[7].transformation.rotation_euler[pyrr.euler.index().yaw] -= np.pi/2
@@ -68,7 +68,7 @@ def main():
         o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr, True, m.hitbox())
         viewer.add_object(o)
         viewer.objs[11 + i].visible = False
-    
+        
     # NPCs bullets
     texture = glutils.load_texture('red1.jpg')
     for i in range(3):
@@ -85,25 +85,27 @@ def main():
     # Container
     m = Mesh.load_obj('cube.obj')
     m.normalize()
+    m.hitbox()
     m.apply_matrix(pyrr.matrix44.create_from_scale([2, 2, 2, 1]))
     tr = Transformation3D()
     tr.translation.y = -np.amin(m.vertices, axis=0)[1]
     tr.translation.z = -2
     tr.rotation_center.z = 0.2
     texture = glutils.load_texture('container.jpg')
-    o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr,False,0)
+    o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr,True,m.hitbox())
     viewer.add_object(o)
 
     # Container
     m = Mesh.load_obj('cube.obj')
     m.normalize()
+    m.hitbox()
     m.apply_matrix(pyrr.matrix44.create_from_scale([2, 2, 2, 1]))
     tr = Transformation3D()
     tr.translation.y = -np.amin(m.vertices, axis=0)[1]
     tr.translation.z = -2
     tr.rotation_center.z = 0.2
     texture = glutils.load_texture('container.jpg')
-    o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr,False,0)
+    o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr,True,m.hitbox())
     viewer.add_object(o)
 
     viewer.objs[4].transformation.translation = viewer.objs[4].transformation.translation + pyrr.Vector3([0, 0, 5])
@@ -159,6 +161,9 @@ def main():
     viewer.cam.transformation.translation = viewer.objs[0].transformation.translation + pyrr.Vector3([0, 1.7, -0.4])
     
     viewer.run()
+
+def new_func(program3d_id):
+    return program3d_id
 
 
 if __name__ == '__main__':

@@ -50,18 +50,31 @@ class ViewerGL:
         
 
     def run(self):
-        #spawn aleatoire d'UN adversaire
-        for i in range(6):
-            self.objs[1 + i].transformation.translation += \
-                    pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[7].transformation.rotation_euler), 
-                                                pyrr.Vector3([randint(25,50)*((-1)**randint(1,2)), 0, randint(25,50)*((-1)**randint(1,2))]))
-        
-        for i in range(3):
-            self.objs[8 + i].transformation.translation = self.objs[1 + i].transformation.translation + pyrr.Vector3([-0.3, 1.7, 3])
         #initialisation de la liste hitboxList
         for i in range(len(self.objs)):
             if self.objs[i].hasHitbox :
                 self.hitboxList.append(self.objs[i].hitbox)
+        
+        
+        
+        #spawn aleatoire des adversaires
+        for i in range(6):
+            #parametres pour coordonner les spawn des NPC et déplacement de leur Hitbox
+            a1, a2, a3, a4 = randint(25,50), randint(1,2), randint(25,50), randint(1,2)
+            self.objs[1 + i].transformation.translation += \
+                    pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[7].transformation.rotation_euler), 
+                                                pyrr.Vector3([a1*((-1)**a2), 0, a3*((-1)**a4)]))
+            #mise à jour des hitbox après aparition
+            self.hitboxList[1+i][0] += \
+                    pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[7].transformation.rotation_euler), 
+                    pyrr.Vector3([a1*((-1)**a2), 0, a3*((-1)**a4)]))
+            self.hitboxList[1 +i][1] += \
+                    pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[7].transformation.rotation_euler), 
+                    pyrr.Vector3([a1*((-1)**a2), 0, a3*((-1)**a4)]))
+        
+        for i in range(3):
+            self.objs[8 + i].transformation.translation = self.objs[1 + i].transformation.translation + pyrr.Vector3([-0.3, 1.7, 3])
+        
         #spawn aleatoire d'un contenaire
         """ a1 = randint(10,40)
         a2 = randint(10,40)
@@ -208,10 +221,11 @@ class ViewerGL:
             self.objs[first_usable_bullet_adress].transformation.translation -= \
                     pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), 
                                                 pyrr.Vector3([np.sin(alpha)*4, np.sin(beta)*4, -4 + np.cos(alpha)*4]))
-            #self.hitboxList[indice_correct][0] -= pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), 
-                                                #pyrr.Vector3([np.sin(alpha)*4, np.sin(beta)*4, -4 + np.cos(alpha)*4])) 
-            #self.hitboxList[indice_correct][1] -= pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), 
-                                                #pyrr.Vector3([np.sin(alpha)*4, np.sin(beta)*4, -4 + np.cos(alpha)*4])) 
+            
+            self.hitboxList[first_usable_bullet_adress][0] -= pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), 
+                                                pyrr.Vector3([np.sin(alpha)*4, np.sin(beta)*4, -4 + np.cos(alpha)*4])) 
+            self.hitboxList[first_usable_bullet_adress][1] -= pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), 
+                                                pyrr.Vector3([np.sin(alpha)*4, np.sin(beta)*4, -4 + np.cos(alpha)*4])) 
             
             self.bullets_dir[first_usable_bullet_adress - 11] = pyrr.Vector3([-np.sin(alpha), -np.sin(beta), np.cos(alpha)])
     
@@ -221,7 +235,10 @@ class ViewerGL:
         self.objs[NPC_bullet_adress].visible = True
         alpha = self.objs[NPC_id].transformation.rotation_euler[pyrr.euler.index().yaw]
         self.objs[NPC_bullet_adress].transformation.translation = self.objs[NPC_id].transformation.translation + pyrr.Vector3([-2*np.sin(alpha), 1, 2*np.cos(alpha)])
-
+        
+        self.hitboxList[NPC_bullet_adress][0] += pyrr.Vector3([-2*np.sin(alpha), 1, 2*np.cos(alpha)])
+        self.hitboxList[NPC_bullet_adress][1] += pyrr.Vector3([-2*np.sin(alpha), 1, 2*np.cos(alpha)])
+        
         self.NPCs_bullets_dir[NPC_bullet_adress - 17] = pyrr.Vector3([-np.sin(alpha), 0, np.cos(alpha)])
     
     #methode permettant de faire venir les NPC
@@ -238,9 +255,9 @@ class ViewerGL:
             alpha = theta - np.pi/2
             self.objs[7 + NPC_id].transformation.translation = self.objs[NPC_id].transformation.translation + pyrr.Vector3([-2*np.sin(alpha), 1, 2*np.cos(alpha)])
         p1 += 0.05*dir*game_speed
-        #self.hitboxList[indice_correct][0] += 0.05*dir*game_speed
-        #self.hitboxList[indice_correct][1] += 0.05*dir*game_speed
-
+        self.hitboxList[NPC_id][0] += 0.05*dir*game_speed
+        self.hitboxList[NPC_id][1] += 0.05*dir*game_speed
+        
     # Methode permettant de se deplacer
     def update_key(self):
         self.character_speed = 0.1
@@ -286,6 +303,13 @@ class ViewerGL:
             self.movement = True
             if is_sprinting:
                 self.sprint = True
+        
+        """if glfw.KEY_N in self.touch and self.touch[glfw.KEY_N] > 0:
+           print(self.hitboxList[11])
+           print(self.hitboxList[10])
+           print(self.hitboxList[12])"""
+
+
 
         if glfw.KEY_A in self.touch and self.touch[glfw.KEY_A] > 0:
             self.objs[0].transformation.translation += \
@@ -321,8 +345,7 @@ class ViewerGL:
             self.movement = True
             if is_sprinting:
                 self.sprint = True
-            print(self.objs[0].transformation.translation)
-            print(self.hitboxList[0])
+            
         
         if glfw.KEY_SPACE in self.touch and self.touch[glfw.KEY_SPACE] > 0:
             self.cam.transformation.rotation_euler = self.objs[0].transformation.rotation_euler.copy() 
@@ -332,7 +355,7 @@ class ViewerGL:
         
         if glfw.MOUSE_BUTTON_LEFT in self.touch and self.touch[glfw.MOUSE_BUTTON_LEFT] > 0 and self.last_shoot_state == 0:
             self.player_shoot()
-
+            #print(self.hitboxList)
         if glfw.MOUSE_BUTTON_LEFT in self.touch:    
             self.last_shoot_state = self.touch[glfw.MOUSE_BUTTON_LEFT]
             
