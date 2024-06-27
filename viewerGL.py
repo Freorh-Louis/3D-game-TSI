@@ -72,8 +72,11 @@ class ViewerGL:
                     pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[7].transformation.rotation_euler), 
                     pyrr.Vector3([a1*((-1)**a2), 0, a3*((-1)**a4)]))
         
+        # spawn des guns de NPCs
         for i in range(3):
             self.objs[8 + i].transformation.translation = self.objs[1 + i].transformation.translation + pyrr.Vector3([-0.3, 1.7, 3])
+            
+            
         
         #spawn aleatoire d'un contenaire
         """ a1 = randint(10,40)
@@ -104,7 +107,8 @@ class ViewerGL:
             for i in range(6):
                 if self.objs[11 + i].visible:
                     self.objs[11 + i].transformation.translation += self.bullets_dir[i]*game_speed
-                
+                    self.hitboxList[11 + i][0] += self.bullets_dir[i]*game_speed
+                    self.hitboxList[11 + i][1] += self.bullets_dir[i]*game_speed
                 self.come(game_speed, 1 + i)
             
             for i in range(3):
@@ -113,7 +117,8 @@ class ViewerGL:
                 
                 if self.objs[17 + i].visible:
                     self.objs[17 + i].transformation.translation += self.NPCs_bullets_dir[i]*game_speed
-            
+                    self.hitboxList[17 + i][0] += self.NPCs_bullets_dir[i]*game_speed
+                    self.hitboxList[17 + i][1] += self.NPCs_bullets_dir[i]*game_speed
 
             for obj in self.objs:
                 GL.glUseProgram(obj.program)
@@ -236,8 +241,8 @@ class ViewerGL:
         alpha = self.objs[NPC_id].transformation.rotation_euler[pyrr.euler.index().yaw]
         self.objs[NPC_bullet_adress].transformation.translation = self.objs[NPC_id].transformation.translation + pyrr.Vector3([-2*np.sin(alpha), 1, 2*np.cos(alpha)])
         
-        self.hitboxList[NPC_bullet_adress][0] += pyrr.Vector3([-2*np.sin(alpha), 1, 2*np.cos(alpha)])
-        self.hitboxList[NPC_bullet_adress][1] += pyrr.Vector3([-2*np.sin(alpha), 1, 2*np.cos(alpha)])
+        self.hitboxList[NPC_bullet_adress][0] += self.objs[NPC_id].transformation.translation + pyrr.Vector3([-2*np.sin(alpha), 1, 2*np.cos(alpha)])
+        self.hitboxList[NPC_bullet_adress][1] += self.objs[NPC_id].transformation.translation + pyrr.Vector3([-2*np.sin(alpha), 1, 2*np.cos(alpha)])
         
         self.NPCs_bullets_dir[NPC_bullet_adress - 17] = pyrr.Vector3([-np.sin(alpha), 0, np.cos(alpha)])
     
@@ -306,8 +311,11 @@ class ViewerGL:
         
         """if glfw.KEY_N in self.touch and self.touch[glfw.KEY_N] > 0:
            print(self.hitboxList[11])
-           print(self.hitboxList[10])
-           print(self.hitboxList[12])"""
+           print(self.hitboxList[12])
+           print(self.hitboxList[13])
+           print(self.hitboxList[14])
+           print(self.hitboxList[15])
+           print(self.hitboxList[16])"""
 
 
 
