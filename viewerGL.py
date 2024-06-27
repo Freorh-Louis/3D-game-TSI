@@ -19,7 +19,7 @@ class ViewerGL:
         glfw.window_hint(glfw.OPENGL_PROFILE, glfw.OPENGL_CORE_PROFILE)
         # création et paramétrage de la fenêtre
         glfw.window_hint(glfw.RESIZABLE, False)
-        self.window = glfw.create_window(800, 800, 'OpenGL', None, None)
+        self.window = glfw.create_window(1000, 1000, 'OpenGL', None, None)
         """ monitors = glfw.get_monitors()
         screen_size = glfw.get_video_mode(monitors[0]) """
         # paramétrage de la fonction de gestion des évènements
@@ -126,7 +126,9 @@ class ViewerGL:
                     self.update_camera(obj.program)
                 obj.draw()
             
-
+            
+            self.colision_management()
+            
             # changement de buffer d'affichage pour éviter un effet de scintillement
             glfw.swap_buffers(self.window)
             # gestion des évènements
@@ -157,14 +159,43 @@ class ViewerGL:
         if dx != 0 or dy != 0:
             self.turning = True
 
+    # methode gérant les colision entre deux hitbox
+    def hitbox_interaction(self,hb1,hb2):
+        x1_min, y1_min, z1_min = hb1[0][0], hb1[0][1], hb1[0][2] 
+        x1_max, y1_max, z1_max = hb1[1][0], hb1[1][1], hb1[1][2]
+        
+        x2_min, y2_min, z2_min = hb2[0][0], hb2[0][1], hb2[0][2] 
+        x2_max, y2_max, z2_max = hb2[1][0], hb2[1][1], hb2[1][2]
+        
+        return not (x1_max < x2_min or  
+                        x1_min > x2_max or  
+                        y1_max < y2_min or  
+                        y1_min > y2_max or  
+                        z1_max < z2_min or  
+                        z1_min > z2_max)
     
-    #def hitbox_interaction(self):
-        #dx = self.hitboxList[0][1][0]-self.hitboxList[0][0][0]
-        #dz = self.hitboxList[0][1][1]-self.hitboxList[0][0][1]
-        #for i in range(1,6):
-           #if self.hitboxList[i][]
-                
-
+    # gestion generale des colision 
+    def colision_management(self):
+        #interraction NPC / PC:
+        for i in range(6):
+            hb1, hb2 = self.hitboxList[0], self.hitboxList[i+1]
+            
+            if self.hitbox_interaction(hb1, hb2):
+                print("colision NPC / PC")
+        
+        #interraction balles / NPC
+        for i in range(4):
+            hb1 = self.hitboxList[i + 11]
+            for i in range(6):
+                hb2 = self.hitboxList[i + 1] 
+                if self.hitbox_interaction(hb1, hb2):
+                    print("Beau Tir BG")
+        
+        #interraction PC / Map
+        hb1 = self.hitboxList[0]
+        if  hb1[0][0] > 50 or hb1[0][0] < -50 or hb1[0][2] > 50 or hb1[0][2] < -50 :
+            print("dehors")
+    
     def key_callback(self, win, key, scancode, action, mods):
         # sortie du programme si appui sur la touche 'échappement'
         if key == glfw.KEY_ESCAPE and action == glfw.PRESS:
@@ -221,6 +252,13 @@ class ViewerGL:
         if first_usable_bullet_adress != 0:
             self.objs[first_usable_bullet_adress].visible = True
             self.objs[first_usable_bullet_adress].transformation.translation = self.objs[0].transformation.translation + pyrr.Vector3([0, 1.6, 4])
+            
+
+            """ problème ici : il faudrait que les hitbox soient cohérentes avec les positions """
+            #self.hitboxList[first_usable_bullet_adress][0] += self.objs[0].transformation.translation + pyrr.Vector3([0, 1.6, 4])
+            #self.hitboxList[first_usable_bullet_adress][1] += self.objs[0].transformation.translation + pyrr.Vector3([0, 1.6, 4])
+            
+            
             alpha = self.objs[0].transformation.rotation_euler[pyrr.euler.index().yaw]
             beta = self.cam.transformation.rotation_euler[pyrr.euler.index().roll]
             self.objs[first_usable_bullet_adress].transformation.translation -= \
@@ -309,14 +347,21 @@ class ViewerGL:
             if is_sprinting:
                 self.sprint = True
         
-        """if glfw.KEY_N in self.touch and self.touch[glfw.KEY_N] > 0:
-           print(self.hitboxList[11])
+        if glfw.KEY_N in self.touch and self.touch[glfw.KEY_N] > 0:
+           print(self.hitboxList[0])
+           """print(self.hitboxList[11])
            print(self.hitboxList[12])
            print(self.hitboxList[13])
            print(self.hitboxList[14])
            print(self.hitboxList[15])
-           print(self.hitboxList[16])"""
-
+           print(self.hitboxList[16])
+           print(self.hitboxList[1])
+           print(self.hitboxList[2])
+           print(self.hitboxList[3])
+           print(self.hitboxList[4])
+           print(self.hitboxList[5])
+           print(self.hitboxList[6])"""
+           print("**********************************************************************")
 
 
         if glfw.KEY_A in self.touch and self.touch[glfw.KEY_A] > 0:
