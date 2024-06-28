@@ -56,7 +56,6 @@ class ViewerGL:
                 self.hitboxList.append(self.objs[i].hitbox)
         
         
-        
         #spawn aleatoire des adversaires
         for i in range(6):
             #parametres pour coordonner les spawn des NPC et déplacement de leur Hitbox
@@ -76,23 +75,6 @@ class ViewerGL:
         for i in range(3):
             self.objs[8 + i].transformation.translation = self.objs[1 + i].transformation.translation + pyrr.Vector3([-0.3, 1.7, 3])
             
-            
-        
-        #spawn aleatoire d'un contenaire
-        """ a1 = randint(10,40)
-        a2 = randint(10,40)
-        p1 = (-1)**randint(1,2)
-        p2 = (-1)**randint(1,2)
-        
-        self.objs[3].transformation.translation += \
-                pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[3].transformation.rotation_euler), pyrr.Vector3([0, 0, p1*a1]))
-        self.objs[4].transformation.translation += \
-                pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[4].transformation.rotation_euler), pyrr.Vector3([0, 0,p1*a1]))
-        
-        self.objs[3].transformation.translation += \
-                pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[3].transformation.rotation_euler), pyrr.Vector3([p2*a2, 0, 0]))
-        self.objs[4].transformation.translation += \
-                pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[4].transformation.rotation_euler), pyrr.Vector3([p2*a2, 0,0])) """
         
         # boucle d'affichage
         while not glfw.window_should_close(self.window):
