@@ -57,7 +57,6 @@ def main():
     # Player bullets
     m = Mesh.load_obj('Sphere.obj')
     m.normalize()
-    m.hitbox()
     m.apply_matrix(pyrr.matrix44.create_from_scale([0.1, 0.1, 0.1, 0.05]))
     texture = glutils.load_texture('green.png')
     for i in range(6):
@@ -85,49 +84,17 @@ def main():
     # Container
     m = Mesh.load_obj('cube.obj')
     m.normalize()
-    m.hitbox()
     m.apply_matrix(pyrr.matrix44.create_from_scale([4, 4, 4, 2]))
     texture = glutils.load_texture('container.jpg')
-    for i in range(3):
-        for j in range(2):
-            tr = Transformation3D()
-            tr.translation.y = -np.amin(m.vertices, axis=0)[1]
-            tr.translation.z = -2
-            tr.rotation_center.z = 0.2
-            o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr, True, m.hitbox())
-            viewer.add_object(o)
-        viewer.objs[21 + 2*i].transformation.translation = viewer.objs[21 + 2*i].transformation.translation + pyrr.Vector3([0, 0, -8.4])
-        viewer.hitboxList[21 + 2*i][0] += pyrr.Vector3([0, 0, -8.4])
-        viewer.hitboxList[21 + 2*i][1] += pyrr.Vector3([0, 0, -8.4])
-        
-        viewer.objs[21 + 2*i].transformation.rotation_euler[pyrr.euler.index().yaw] = np.pi
+    for i in range(6):
+        tr = Transformation3D()
+        tr.translation.y = -np.amin(m.vertices, axis=0)[1]
+        tr.translation.z = -2
+        tr.rotation_center.z = 0.2
+        o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr, True, m.hitbox())
+        viewer.add_object(o)
     
-    viewer.objs[20].transformation.translation += pyrr.Vector3([-8, 0, 7])
-    #viewer.hitboxList[20][0] += pyrr.Vector3([-8, 0, 7])
-    #viewer.hitboxList[20][1] += pyrr.Vector3([-8, 0, 7])
     
-    viewer.objs[21].transformation.translation += pyrr.Vector3([-8, 0, 7])
-    #viewer.hitboxList[21][0] += pyrr.Vector3([-8, 0, 7])
-    #viewer.hitboxList[21][1] += pyrr.Vector3([-8, 0, 7])
-    
-    viewer.objs[22].transformation.translation += pyrr.Vector3([0, 0, 25])
-    #viewer.hitboxList[22][0] += pyrr.Vector3([0, 0, 25])
-    #viewer.hitboxList[22][1] += pyrr.Vector3([0, 0, 25])
-    
-    viewer.objs[23].transformation.translation += pyrr.Vector3([8.4, 0, 25 + 8.4])
-    #viewer.hitboxList[23][0] += pyrr.Vector3([8.4, 0, 25 + 8.4])
-    #viewer.hitboxList[23][1] += pyrr.Vector3([8.4, 0, 25 + 8.4])
-    
-    viewer.objs[22].transformation.rotation_euler[pyrr.euler.index().yaw] = np.pi/2
-    viewer.objs[23].transformation.rotation_euler[pyrr.euler.index().yaw] = -np.pi/2
-
-    viewer.objs[24].transformation.translation += pyrr.Vector3([22, 0, -13])
-    #viewer.hitboxList[24][0] += pyrr.Vector3([22, 0, -13])
-    #viewer.hitboxList[24][1] += pyrr.Vector3([22, 0, -13])
-    
-    viewer.objs[25].transformation.translation += pyrr.Vector3([22, 0, -13])
-    #viewer.hitboxList[25][0] += pyrr.Vector3([22, 0, -13])
-    #viewer.hitboxList[25][1] += pyrr.Vector3([22, 0, -13])
 
 
     # Map

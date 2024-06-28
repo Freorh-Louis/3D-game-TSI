@@ -19,8 +19,8 @@ class Mesh():
         self.vertices = np.array([np.concatenate((((v[:3]-avg[:3])/amp), v[3:])) for v in self.vertices], np.float32)
     
     def hitbox(self):
-        p0 = np.amin(self.vertices, axis = 0)[:3]
-        p1 = np.amax(self.vertices, axis = 0)[:3]
+        p0 = np.amin(self.vertices, axis = 0)[:3] - pyrr.Vector3([0, np.amin(self.vertices, axis=0)[1], 2])
+        p1 = np.amax(self.vertices, axis = 0)[:3] - pyrr.Vector3([0, np.amin(self.vertices, axis=0)[1], 2])
         return( [p0,p1] )
         
 
