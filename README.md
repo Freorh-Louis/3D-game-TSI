@@ -16,8 +16,9 @@ Contrôles :
 
 Z : avancer
 Q : gauche
-S : réculer
+S : reculer
 D : droite
 Shift : sprint
 Souris : déplacement de la caméra
 Clic-gauche : tirer
+echap : quitter le jeu

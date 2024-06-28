@@ -7,6 +7,7 @@ import numpy as np
 from cpe3d import Object3D
 from random import randint
 from math import atan2
+from copy import deepcopy
 
 class ViewerGL:
     def __init__(self):
@@ -47,10 +48,6 @@ class ViewerGL:
         glfw.set_cursor_pos(self.window, 400, 400)
         self.x_cursor, self.y_cursor = glfw.get_cursor_pos(self.window)
         glfw.set_input_mode(self.window, glfw.CURSOR, glfw.CURSOR_DISABLED)
-        self.can_go_posx = True
-        self.can_go_negx = True
-        self.can_go_posz = True
-        self.can_go_negz = True
         
         
 
@@ -211,12 +208,13 @@ class ViewerGL:
             if self.objs[i + 11].visible:
                 x, y, z = self.objs[i + 11].transformation.translation
                 for j in range(6):
-                    hb2 = self.hitboxList[j + 1]
-                    if x > hb2[0][0] and y > hb2[0][1] and z > hb2[0][2] and x < hb2[1][0] and y < hb2[1][1] and z < hb2[1][2]:
-                        self.objs[j + 1].visible = False
-                        self.objs[i + 11].visible = False
-                        if j < 3:
-                            self.objs[j + 8].visible = False
+                    if self.objs[j + 1].visible:
+                        hb2 = self.hitboxList[j + 1]
+                        if x > hb2[0][0] and y > hb2[0][1] and z > hb2[0][2] and x < hb2[1][0] and y < hb2[1][1] and z < hb2[1][2]:
+                            self.objs[j + 1].visible = False
+                            self.objs[i + 11].visible = False
+                            if j < 3:
+                                self.objs[j + 8].visible = False
         
         # interaction balles_NPC / PC
         for i in range(3):
@@ -228,25 +226,49 @@ class ViewerGL:
         
         #interaction Balles / Map
         for i in range(9):
-            x,y,z = self.objs[i + 11].transformation.translation
-            # les balles sont en position y = -2 
-            if x > 50 or x < -50 or z > 50 or z < -50 or y < -2 or y > 48:
-                self.objs[i+11].visible = False
-            for j in range(6):
-                hb2 = self.hitboxList[20 + j]
-                if x > hb2[0][0] and y > hb2[0][1] and z > hb2[0][2] and x < hb2[1][0] and y < hb2[1][1] and z < hb2[1][2]:
-                    self.objs[i + 11].visible = False
+            if self.objs[i + 11].visible:
+                x,y,z = self.objs[i + 11].transformation.translation
+                # les balles sont en position y = -2 
+                if x > 50 or x < -50 or z > 50 or z < -50 or y < 0 or y > 50:
+                    self.objs[i+11].visible = False
+                for j in range(6):
+                    hb2 = self.hitboxList[20 + j]
+                    if x > hb2[0][0] and y > hb2[0][1] and z > hb2[0][2] and x < hb2[1][0] and y < hb2[1][1] and z < hb2[1][2]:
+                        self.objs[i + 11].visible = False
         
         #interaction PC / Map
         hb1 = self.objs[0].transformation.translation
-        if  hb1[0] > 50:
-            self.can_go_posx = False
-        if hb1[0] < -50:
-            self.can_go_negx = False
-        if hb1[2] > 50:
-            self.can_go_posz = False
-        if hb1[2] < -50 :
-            self.can_go_negz = False
+        if  hb1[0] > 49:
+            delta1 = self.hitboxList[0][0][0] - self.objs[0].transformation.translation[0]
+            delta2 = self.hitboxList[0][1][0] - self.objs[0].transformation.translation[0]
+            self.objs[0].transformation.translation[0] = 49
+            self.objs[7].transformation.translation[0] = 49
+            self.hitboxList[0][0][0] = 49 + delta1
+            self.hitboxList[0][1][0] = 49 + delta2
+
+        if hb1[0] < -49:
+            delta1 = self.hitboxList[0][0][0] - self.objs[0].transformation.translation[0]
+            delta2 = self.hitboxList[0][1][0] - self.objs[0].transformation.translation[0]
+            self.objs[0].transformation.translation[0] = -49
+            self.objs[7].transformation.translation[0] = -49
+            self.hitboxList[0][0][0] = -49 + delta1
+            self.hitboxList[0][1][0] = -49 + delta2
+
+        if hb1[2] > 49:
+            delta1 = self.hitboxList[0][0][2] - self.objs[0].transformation.translation[2]
+            delta2 = self.hitboxList[0][1][2] - self.objs[0].transformation.translation[2]
+            self.objs[0].transformation.translation[2] = 49
+            self.objs[7].transformation.translation[2] = 49
+            self.hitboxList[0][0][2] = 49 + delta1
+            self.hitboxList[0][1][2] = 49 + delta2
+
+        if hb1[2] < -49:
+            delta1 = self.hitboxList[0][0][2] - self.objs[0].transformation.translation[2]
+            delta2 = self.hitboxList[0][1][2] - self.objs[0].transformation.translation[2]
+            self.objs[0].transformation.translation[2] = -49
+            self.objs[7].transformation.translation[2] = -49
+            self.hitboxList[0][0][2] = -49 + delta1
+            self.hitboxList[0][1][2] = -49 + delta2
             
             
         
@@ -255,7 +277,28 @@ class ViewerGL:
         for i in range(6):
             hb2 = self.hitboxList[20 + i]
             if self.hitbox_interaction(hb1,hb2):
-                print("collision")
+                self.objs[0].transformation.translation = self.last_pos
+                self.objs[7].transformation.translation = self.last_gun_pos
+                self.hitboxList[0] = self.last_hitbox
+        
+        # collision NPC / container
+        for i in range(6):
+            hb1 = self.hitboxList[1 + i]
+            for j in range(6):
+                hb2 = self.hitboxList[20 + j]
+                if self.hitbox_interaction(hb1,hb2):
+                    self.objs[1 + i].transformation.translation = self.last_NPC_pos[i]
+                    if i < 3:
+                        self.objs[8 + i].transformation.translation = self.last_NPC_gun_pos[i]
+                    self.hitboxList[1 + i] = self.last_NPC_hitbox[i]
+        
+        self.last_pos = self.objs[0].transformation.translation.copy()
+        self.last_gun_pos = self.objs[7].transformation.translation.copy()
+        self.last_hitbox = deepcopy(self.hitboxList[0])
+
+        self.last_NPC_pos = [self.objs[1 + i].transformation.translation.copy() for i in range(6)]
+        self.last_NPC_gun_pos = [self.objs[8 + i].transformation.translation.copy() for i in range(3)]
+        self.last_NPC_hitbox = [deepcopy(self.hitboxList[1 + i]) for i in range(6)]
                 
 
     def key_callback(self, win, key, scancode, action, mods):
@@ -359,9 +402,9 @@ class ViewerGL:
             self.objs[7 + NPC_id].transformation.rotation_euler[pyrr.euler.index().yaw] = theta + np.pi
             alpha = theta - np.pi/2
             self.objs[7 + NPC_id].transformation.translation = self.objs[NPC_id].transformation.translation + pyrr.Vector3([-2*np.sin(alpha), 1, 2*np.cos(alpha)])
-        p1 += 0.05*dir*game_speed
-        self.hitboxList[NPC_id][0] += 0.05*dir*game_speed
-        self.hitboxList[NPC_id][1] += 0.05*dir*game_speed
+        p1 += 0.1*dir*game_speed
+        self.hitboxList[NPC_id][0] += 0.1*dir*game_speed
+        self.hitboxList[NPC_id][1] += 0.1*dir*game_speed
         
     # Methode permettant de se deplacer
     def update_key(self):
