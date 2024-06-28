@@ -10,6 +10,9 @@ La vitesse de déplacement des ennemis et des balles tirés par pistolet dépend
 
 Si ces 3 conditions sont respectées, la vitesse du jeu est donc au maximum.
 
+Si le joueur est touché par un adversaire ou par une balle, le jeu se ferme ete le joueur à perdu.
+Si il élimine tout les ennemis, il a gagné.
+
 
 
 Contrôles :
