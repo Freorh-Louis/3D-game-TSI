@@ -28,7 +28,7 @@ def main():
     o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr, True, m.hitbox())
     viewer.add_object(o)
     viewer.objs[0].visible = False
-
+    
     # NPCs
     texture = glutils.load_texture('red.jpg')
     for i in range(6):
