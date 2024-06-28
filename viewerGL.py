@@ -61,7 +61,7 @@ class ViewerGL:
         #spawn aleatoire des adversaires
         for i in range(6):
             #parametres pour coordonner les spawn des NPC et déplacement de leur Hitbox
-            a1, a2, a3, a4 = randint(25,50), randint(1,2), randint(25,50), randint(1,2)
+            a1, a2, a3, a4 = randint(30,50), randint(1,2), randint(30,50), randint(1,2)
             self.objs[1 + i].transformation.translation += \
                     pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[7].transformation.rotation_euler), 
                                                 pyrr.Vector3([a1*((-1)**a2), 0, a3*((-1)**a4)]))
