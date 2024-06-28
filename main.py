@@ -28,7 +28,7 @@ def main():
     o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr, True, m.hitbox())
     viewer.add_object(o)
     viewer.objs[0].visible = False
-
+    
     # NPCs
     texture = glutils.load_texture('red.jpg')
     for i in range(6):
@@ -94,21 +94,40 @@ def main():
             tr.translation.y = -np.amin(m.vertices, axis=0)[1]
             tr.translation.z = -2
             tr.rotation_center.z = 0.2
-            o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr,True,m.hitbox())
+            o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr, True, m.hitbox())
             viewer.add_object(o)
         viewer.objs[21 + 2*i].transformation.translation = viewer.objs[21 + 2*i].transformation.translation + pyrr.Vector3([0, 0, -8.4])
+        viewer.hitboxList[21 + 2*i][0] += pyrr.Vector3([0, 0, -8.4])
+        viewer.hitboxList[21 + 2*i][1] += pyrr.Vector3([0, 0, -8.4])
+        
         viewer.objs[21 + 2*i].transformation.rotation_euler[pyrr.euler.index().yaw] = np.pi
     
     viewer.objs[20].transformation.translation += pyrr.Vector3([-8, 0, 7])
+    #viewer.hitboxList[20][0] += pyrr.Vector3([-8, 0, 7])
+    #viewer.hitboxList[20][1] += pyrr.Vector3([-8, 0, 7])
+    
     viewer.objs[21].transformation.translation += pyrr.Vector3([-8, 0, 7])
-
+    #viewer.hitboxList[21][0] += pyrr.Vector3([-8, 0, 7])
+    #viewer.hitboxList[21][1] += pyrr.Vector3([-8, 0, 7])
+    
     viewer.objs[22].transformation.translation += pyrr.Vector3([0, 0, 25])
+    #viewer.hitboxList[22][0] += pyrr.Vector3([0, 0, 25])
+    #viewer.hitboxList[22][1] += pyrr.Vector3([0, 0, 25])
+    
     viewer.objs[23].transformation.translation += pyrr.Vector3([8.4, 0, 25 + 8.4])
+    #viewer.hitboxList[23][0] += pyrr.Vector3([8.4, 0, 25 + 8.4])
+    #viewer.hitboxList[23][1] += pyrr.Vector3([8.4, 0, 25 + 8.4])
+    
     viewer.objs[22].transformation.rotation_euler[pyrr.euler.index().yaw] = np.pi/2
     viewer.objs[23].transformation.rotation_euler[pyrr.euler.index().yaw] = -np.pi/2
 
     viewer.objs[24].transformation.translation += pyrr.Vector3([22, 0, -13])
+    #viewer.hitboxList[24][0] += pyrr.Vector3([22, 0, -13])
+    #viewer.hitboxList[24][1] += pyrr.Vector3([22, 0, -13])
+    
     viewer.objs[25].transformation.translation += pyrr.Vector3([22, 0, -13])
+    #viewer.hitboxList[25][0] += pyrr.Vector3([22, 0, -13])
+    #viewer.hitboxList[25][1] += pyrr.Vector3([22, 0, -13])
 
 
     # Map
@@ -144,7 +163,7 @@ def main():
     for i in range(6):
         m.vertices = np.array([liste_param[4*i],liste_param[4*i+1],liste_param[4*i+2],liste_param[4*i+3]], np.float32)
         m.faces = np.array([[0, 1, 2], [0, 2, 3]], np.uint32)
-        o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, Transformation3D(), False, 0)
+        o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, Transformation3D(), True, 0)
         viewer.add_object(o)
     
 

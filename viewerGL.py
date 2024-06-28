@@ -33,8 +33,9 @@ class ViewerGL:
         # choix de la couleur de fond
         GL.glClearColor(0.5, 0.6, 0.9, 1.0)
         print(f"OpenGL: {GL.glGetString(GL.GL_VERSION).decode('ascii')}")
-
+        
         self.movement = False
+        self.movement_forward_allowed = True
         self.sprint = False
         self.turning = False
         self.hitboxList = []
@@ -54,7 +55,7 @@ class ViewerGL:
         for i in range(len(self.objs)):
             if self.objs[i].hasHitbox :
                 self.hitboxList.append(self.objs[i].hitbox)
-        
+       
         
         #spawn aleatoire des adversaires
         for i in range(6):
@@ -83,6 +84,7 @@ class ViewerGL:
 
             self.update_key()
             self.cursor_camera()
+            self.collision_management()
 
             game_speed = 0.1*self.turning + 0.4*self.movement + 0.5*self.sprint
 
@@ -109,7 +111,7 @@ class ViewerGL:
                 obj.draw()
             
             
-            self.colision_management()
+            
             
             # changement de buffer d'affichage pour éviter un effet de scintillement
             glfw.swap_buffers(self.window)
@@ -141,7 +143,7 @@ class ViewerGL:
         if dx != 0 or dy != 0:
             self.turning = True
 
-    # methode gérant les colision entre deux hitbox
+    # methode gérant les collision entre deux hitboxes
     def hitbox_interaction(self,hb1,hb2):
         x1_min, y1_min, z1_min = hb1[0][0], hb1[0][1], hb1[0][2] 
         x1_max, y1_max, z1_max = hb1[1][0], hb1[1][1], hb1[1][2]
@@ -156,28 +158,65 @@ class ViewerGL:
                         z1_max < z2_min or  
                         z1_min > z2_max)
     
-    # gestion generale des colision 
-    def colision_management(self):
-        #interraction NPC / PC:
+    # gestion generale des collisions
+    def collision_management(self):
+        
+        #interaction NPC / PC:
         for i in range(6):
             hb1, hb2 = self.hitboxList[0], self.hitboxList[i+1]
-            
             if self.hitbox_interaction(hb1, hb2):
                 print("colision NPC / PC")
         
-        #interraction balles / NPC
+        #interaction balles / NPC
         for i in range(4):
             hb1 = self.hitboxList[i + 11]
             for i in range(6):
-                hb2 = self.hitboxList[i + 1] 
+                hb2 = self.hitboxList[i + 1]
                 if self.hitbox_interaction(hb1, hb2):
                     print("Beau Tir BG")
         
-        #interraction PC / Map
-        hb1 = self.hitboxList[0]
-        if  hb1[0][0] > 50 or hb1[0][0] < -50 or hb1[0][2] > 50 or hb1[0][2] < -50 :
-            print("dehors")
-    
+        #interaction Balles / Map
+        for i in range(6):
+            pos = self.objs[i + 11].transformation.translation
+            # les balles sont en position y = -2 
+            if pos[0] > 50 or pos[0] < -50 or pos[2] > 50 or pos[2] < -50 or pos[1] < -2 or pos[1] > 48:
+                self.objs[i+11].visible = False
+                print("balles dehors")
+        
+        #interaction PC / Map
+        hb1 = self.objs[0].transformation.translation
+        if  hb1[0] > 48 or hb1[0] < -48 or hb1[2] > 48 or hb1[2] < -48 :
+            self.objs[0].transformation.translation -= \
+                pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), pyrr.Vector3([0, 0, self.character_speed]))
+            self.hitboxList[0][0] -= \
+                pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), pyrr.Vector3([0, 0, self.character_speed]))
+            self.hitboxList[0][1] -= \
+                pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), pyrr.Vector3([0, 0, self.character_speed]))
+            self.objs[7].transformation.translation -= \
+                pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), pyrr.Vector3([0, 0, self.character_speed]))
+            self.cam.transformation.rotation_center = self.objs[0].transformation.translation + self.objs[0].transformation.rotation_center
+            self.cam.transformation.translation = self.objs[0].transformation.translation + pyrr.Vector3([0, 1.7, -0.4])
+            self.movement = False
+        
+        # collision joueur container
+        """hb1 = self.hitboxList[0]
+        for i in range(6):
+            hb2 = self.hitboxList[20 + i]
+            if self.hitbox_interaction(hb1,hb2):
+                print("collision")
+                
+                self.objs[0].transformation.translation -= \
+                pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), pyrr.Vector3([0, 0, self.character_speed]))
+                self.hitboxList[0][0] -= \
+                pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), pyrr.Vector3([0, 0, self.character_speed]))
+                self.hitboxList[0][1] -= \
+                pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), pyrr.Vector3([0, 0, self.character_speed]))
+                self.objs[7].transformation.translation -= \
+                pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), pyrr.Vector3([0, 0, self.character_speed]))
+                self.cam.transformation.rotation_center = self.objs[0].transformation.translation + self.objs[0].transformation.rotation_center
+                self.cam.transformation.translation = self.objs[0].transformation.translation + pyrr.Vector3([0, 1.7, -0.4])
+                self.movement = False"""
+
     def key_callback(self, win, key, scancode, action, mods):
         # sortie du programme si appui sur la touche 'échappement'
         if key == glfw.KEY_ESCAPE and action == glfw.PRESS:
@@ -331,18 +370,12 @@ class ViewerGL:
         
         if glfw.KEY_N in self.touch and self.touch[glfw.KEY_N] > 0:
            print(self.hitboxList[0])
-           """print(self.hitboxList[11])
-           print(self.hitboxList[12])
-           print(self.hitboxList[13])
-           print(self.hitboxList[14])
-           print(self.hitboxList[15])
-           print(self.hitboxList[16])
            print(self.hitboxList[1])
            print(self.hitboxList[2])
            print(self.hitboxList[3])
            print(self.hitboxList[4])
            print(self.hitboxList[5])
-           print(self.hitboxList[6])"""
+           print(self.hitboxList[6])
            print("**********************************************************************")
 
 
@@ -390,7 +423,7 @@ class ViewerGL:
         
         if glfw.MOUSE_BUTTON_LEFT in self.touch and self.touch[glfw.MOUSE_BUTTON_LEFT] > 0 and self.last_shoot_state == 0:
             self.player_shoot()
-            #print(self.hitboxList)
+            
         if glfw.MOUSE_BUTTON_LEFT in self.touch:    
             self.last_shoot_state = self.touch[glfw.MOUSE_BUTTON_LEFT]
             
