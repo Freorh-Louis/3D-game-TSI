@@ -86,15 +86,14 @@ def main():
     m.normalize()
     m.apply_matrix(pyrr.matrix44.create_from_scale([4, 4, 4, 2]))
     texture = glutils.load_texture('container.jpg')
-    for i in range(3):
-        for j in range(2):
-            tr = Transformation3D()
-            tr.translation.y = -np.amin(m.vertices, axis=0)[1]
-            tr.translation.z = -2
-            tr.rotation_center.z = 0.2
-            o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr, True, m.hitbox())
-            viewer.add_object(o)
-            
+    for i in range(6):
+        tr = Transformation3D()
+        tr.translation.y = -np.amin(m.vertices, axis=0)[1]
+        tr.translation.z = -2
+        tr.rotation_center.z = 0.2
+        o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr, True, m.hitbox())
+        viewer.add_object(o)
+    
     
 
 
