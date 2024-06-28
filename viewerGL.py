@@ -55,7 +55,42 @@ class ViewerGL:
         for i in range(len(self.objs)):
             if self.objs[i].hasHitbox :
                 self.hitboxList.append(self.objs[i].hitbox)
-       
+       #spawn des containers
+        for i in range(3):
+            self.objs[21 + 2*i].transformation.translation = self.objs[21 + 2*i].transformation.translation + pyrr.Vector3([0, 0, -8.4])
+            self.hitboxList[21 + 2*i][0] += pyrr.Vector3([0, 0, -8.4])
+            self.hitboxList[21 + 2*i][1] += pyrr.Vector3([0, 0, -8.4])
+            self.objs[21 + 2*i].transformation.rotation_euler[pyrr.euler.index().yaw] = np.pi
+        
+        
+        
+        self.objs[20].transformation.translation += pyrr.Vector3([-8, 0, 7])
+        self.hitboxList[20][0] += pyrr.Vector3([-8, 0, 7])
+        self.hitboxList[20][1] += pyrr.Vector3([-8, 0, 7])
+    
+        self.objs[21].transformation.translation += pyrr.Vector3([-8, 0, 7])
+        self.hitboxList[21][0] += pyrr.Vector3([-8, 0, 7])
+        self.hitboxList[21][1] += pyrr.Vector3([-8, 0, 7])
+    
+        self.objs[22].transformation.translation += pyrr.Vector3([0, 0, 25])
+        self.hitboxList[22][0] += pyrr.Vector3([0, 0, 25])
+        self.hitboxList[22][1] += pyrr.Vector3([0, 0, 25])
+    
+        self.objs[23].transformation.translation += pyrr.Vector3([8.4, 0, 25 + 8.4])
+        self.hitboxList[23][0] += pyrr.Vector3([8.4, 0, 25 + 8.4])
+        self.hitboxList[23][1] += pyrr.Vector3([8.4, 0, 25 + 8.4])
+    
+        self.objs[22].transformation.rotation_euler[pyrr.euler.index().yaw] = np.pi/2
+        self.objs[23].transformation.rotation_euler[pyrr.euler.index().yaw] = -np.pi/2
+
+        self.objs[24].transformation.translation += pyrr.Vector3([22, 0, -13])
+        self.hitboxList[24][0] += pyrr.Vector3([22, 0, -13])
+        self.hitboxList[24][1] += pyrr.Vector3([22, 0, -13])
+    
+        self.objs[25].transformation.translation += pyrr.Vector3([22, 0, -13])
+        self.hitboxList[25][0] += pyrr.Vector3([22, 0, -13])
+        self.hitboxList[25][1] += pyrr.Vector3([22, 0, -13])
+        
         
         
         #spawn aleatoire des adversaires
@@ -187,10 +222,11 @@ class ViewerGL:
         
         #interaction balles / NPC
         for i in range(4):
+            pos = self.objs[i + 11].transformation.translation
             hb1 = self.hitboxList[i + 11]
-            for i in range(6):
-                hb2 = self.hitboxList[i + 1]
-                if self.hitbox_interaction(hb1, hb2):
+            for j in range(6):
+                hb2 = self.hitboxList[j + 1]
+                if self.hitbox_interaction(hb1,hb2):
                     print("Beau Tir BG")
         
         #interaction Balles / Map
@@ -217,7 +253,7 @@ class ViewerGL:
             self.movement = False
         
         # collision joueur container
-        """hb1 = self.hitboxList[0]
+        hb1 = self.hitboxList[0]
         for i in range(6):
             hb2 = self.hitboxList[20 + i]
             if self.hitbox_interaction(hb1,hb2):
@@ -233,7 +269,7 @@ class ViewerGL:
                 pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), pyrr.Vector3([0, 0, self.character_speed]))
                 self.cam.transformation.rotation_center = self.objs[0].transformation.translation + self.objs[0].transformation.rotation_center
                 self.cam.transformation.translation = self.objs[0].transformation.translation + pyrr.Vector3([0, 1.7, -0.4])
-                self.movement = False"""
+                self.movement = False
 
     def key_callback(self, win, key, scancode, action, mods):
         # sortie du programme si appui sur la touche 'échappement'
@@ -387,13 +423,18 @@ class ViewerGL:
                 self.sprint = True
         
         if glfw.KEY_N in self.touch and self.touch[glfw.KEY_N] > 0:
-           print(self.hitboxList[0])
            print(self.hitboxList[1])
            print(self.hitboxList[2])
            print(self.hitboxList[3])
            print(self.hitboxList[4])
            print(self.hitboxList[5])
            print(self.hitboxList[6])
+           print(self.objs[11].transformation.translation)
+           print(self.objs[12].transformation.translation)
+           print(self.objs[13].transformation.translation)
+           print(self.objs[14].transformation.translation)
+           print(self.objs[15].transformation.translation)
+           print(self.objs[16].transformation.translation)
            print("**********************************************************************")
 
 
